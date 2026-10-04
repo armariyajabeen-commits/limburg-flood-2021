@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b3a5c">
+<title>Evidence and method, Limburg 2021</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a5c'/%3E%3Cpath d='M4 20q4-5 8 0t8 0 8 0v8H4z' fill='%232a78d6'/%3E%3C/svg%3E">
+<script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root{--ground:#F4F5F1;--panel:#FCFCFB;--ink:#16201F;--muted:#5B6664;--rule:#DCE0DA;--grid:#E9ECE7;--focus:#2A78D6;--ns:#D9DCD6;--a:#4A3AA7;--b:#EB6834;--obs:#2a78d6;--mod:#0f7b8a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#141817;--panel:#1B1F1E;--ink:#ECEFEC;--muted:#A3ADAA;--rule:#2F3634;--grid:#252B29;--focus:#86B6EF;--ns:#3A403E;--a:#9085E9;--b:#D95926;--mod:#3fb6c4}}
+:root[data-theme="dark"]{--ground:#141817;--panel:#1B1F1E;--ink:#ECEFEC;--muted:#A3ADAA;--rule:#2F3634;--grid:#252B29;--focus:#86B6EF;--ns:#3A403E;--a:#9085E9;--b:#D95926;--mod:#3fb6c4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;font-variant-numeric:tabular-nums}
+main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:0 0 6px;max-width:75ch}
+nav a,button.theme{font:inherit;font-size:13px;color:var(--ink);border:1px solid var(--rule);background:var(--panel);border-radius:999px;padding:6px 12px;text-decoration:none;cursor:pointer}
+nav a:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+section{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:20px 22px;margin-top:22px}
+h2{font-size:16px;margin:0 0 4px}
+h3{font-size:13.5px;margin:18px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px;max-width:85ch}
+table{border-collapse:collapse;font-size:13px;min-width:520px}
+th,td{padding:7px 12px;border-top:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+td.l,th.l{text-align:left}
+thead th{border-top:0;color:var(--muted);font-weight:600;font-size:12px}
+td.us{font-weight:600}
+td small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+.grid4{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.mapcard h3{font-size:13px;margin:0 0 2px;font-weight:600}
+.mapcard h3.obs{color:var(--obs)} .mapcard h3.mod{color:var(--mod)}
+.mapcard p{margin:0 0 6px;color:var(--muted);font-size:11.5px}
+.mapcard svg{width:100%;height:auto;display:block;background:var(--ground);border:1px solid var(--rule);border-radius:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.stats div{border-top:3px solid var(--obs);padding-top:6px}
+.stats div.mod{border-color:var(--mod)}
+.stats strong{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.stats span{color:var(--muted);font-size:12px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.chain{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.chain li{border:1px solid var(--rule);border-radius:10px;padding:10px 12px;font-size:12.5px;counter-increment:s;background:var(--ground)}
+.chain li::before{content:counter(s);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--panel);font-size:11px;font-weight:700;margin-right:6px}
+.chain b{font-weight:600}
+.chain small{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
+.chain li.mod{border-color:var(--mod)}
+@media (max-width:700px){
+  main{padding:16px max(12px,env(safe-area-inset-left)) calc(40px + env(safe-area-inset-bottom))}
+  section{padding:14px 12px;border-radius:10px}
+  h1{font-size:21px}
+  .grid4{grid-template-columns:1fr 1fr;gap:10px}
+  .scroll::before{content:"Swipe sideways to see all of it →";display:block;font-size:11.5px;color:var(--muted);margin-bottom:6px}
+}
+.note{background:color-mix(in srgb,var(--focus) 8%,transparent);border-left:3px solid var(--focus);padding:10px 14px;font-size:13px;margin-top:14px;max-width:95ch}
+.note.mod{border-color:var(--mod);background:color-mix(in srgb,var(--mod) 9%,transparent)}
+.note.bad{border-color:var(--b);background:color-mix(in srgb,var(--b) 8%,transparent)}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;border:1px solid var(--rule);white-space:nowrap}
+.tag.ok{color:#1a7f4b;border-color:#1a7f4b} .tag.part{color:#a66a00;border-color:#a66a00} .tag.no{color:#b3261e;border-color:#b3261e}
+.tip{position:fixed;pointer-events:none;background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:6px 9px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.15);display:none;z-index:5}
+.sw{display:inline-block;width:14px;height:9px;margin-right:5px;vertical-align:-1px;border-radius:2px}
+.key{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:4px 0 8px}
+ul.plain{margin:6px 0 0 18px;padding:0}
+ul.plain li{margin:3px 0}
+code{font-size:12px;background:var(--ground);border:1px solid var(--rule);border-radius:4px;padding:0 4px}
+a{color:var(--ink)}
+.src{color:var(--muted);font-size:11.5px;margin-top:6px}
+#loaderr{display:none}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Evidence and method</h1>
+      <p class="lede" id="lede">Loading…</p>
+    </div>
+    <nav style="display:flex;gap:8px"><a href="../">← Back to the map</a><button class="theme" id="theme"></button></nav>
+  </header>
+  <div class="note bad" id="loaderr"></div>
+
+  <section>
+    <h2>Headline numbers, all from the project run</h2>
+    <p class="sub">Every figure on this page is read from <code>data/facts.json</code>, which was parsed from the project's logs and output tables. The file named under each section shows where a number comes from.</p>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section>
+    <h2>Observed flood versus modelled scenarios</h2>
+    <p class="sub">The two are different kinds of evidence and are never mixed. <b>Observed</b>: the maximum flooded extent of July 2021 (4TU.ResearchData), a preliminary reconstruction. <b>Modelled</b>: dike-breach scenarios from the national hazard maps (T = 10, 100, 1,000 and 10,000 years), a design scenario for a different hazard type. The panels show the same 3.6 km window around <span id="winname"></span>. The solid blue area is observed; hatched teal areas are modelled.</p>
+    <div class="key"><span><i class="sw" style="background:rgba(42,120,214,.5);border:1px solid #1c5cab"></i>observed extent</span><span><i class="sw" style="background:repeating-linear-gradient(45deg,var(--mod) 0 1.5px,transparent 1.5px 4px);border:1px dashed var(--mod)"></i>modelled scenario</span><span><i class="sw" style="background:#d62728"></i>flooded residential building (BAG)</span><span><i class="sw" style="background:#f2c200"></i>flooded in 2021 but outside the scenario</span><span><i class="sw" style="background:#9a9a9a"></i>other residential building</span></div>
+    <div class="grid4" id="small"></div>
+    <h3>How many of the 2,033 observed-flooded residential buildings does each scenario catch?</h3>
+    <p class="sub">A building counts as caught when its footprint, buffered by the stated distance, touches the modelled flooded area. The modelled polygons have holes at building footprints, so a plain point-in-polygon test is biased. The buffer rule replaces the first version of this test (script <code>05b</code>), and the 2 m column is the one used throughout.</p>
+    <div class="scroll"><table id="captbl"></table></div>
+    <div class="src">Source: outputs/modelled_vs_observed_corrected.csv</div>
+    <h3>By river, with a 2 m buffer</h3>
+    <div class="scroll"><table id="rivtbl"></table></div>
+    <div class="src">Source: outputs/modelled_catch_by_river_corrected.csv. "Edge" are buildings that only touch the observed extent.</div>
+    <h3>Area overlap</h3>
+    <div class="scroll"><table id="areatbl"></table></div>
+    <div class="src">Source: outputs/modelled_vs_observed.csv, area columns only (its building columns were superseded by the table above).</div>
+    <h3>Scenario water depth at the observed-flooded buildings</h3>
+    <p class="sub">These are the depth classes of the modelled scenario at buildings that were flooded in the observed event. They are scenario depths, <b>not</b> observed depths: the observed extent carries no depth at all.</p>
+    <div class="scroll"><table id="deptbl"></table></div>
+    <div class="src">Source: outputs/modelled_depth_at_flooded_residential_buildings.csv</div>
+    <div class="note mod">The modelled hazard is for dike-breach scenarios, the observed event was not a breach flood, and the two have a different licence status (the 4TU extent is CC BY 4.0; the scenario layers have an unclear licence). The scenarios are therefore shown as context and as a test of how well modelled maps predict a real event, not as the exposure measured on the site.</div>
+  </section>
+
+  <section>
+    <h2>Provenance chain: raw data to the figures on the map</h2>
+    <p class="sub">Eleven scripted steps, run in this order (<code>README_RUN_ORDER.md</code>). Steps in teal handle the modelled hazard.</p>
+    <ol class="chain" id="chain"></ol>
+  </section>
+
+  <section>
+    <h2>Three ways to count exposed residents</h2>
+    <p class="sub">The population is a 100 m grid, the flood is a polygon, and the buildings are in the BAG. The three methods use the same inputs and give different answers, which is itself a finding.</p>
+    <div class="scroll"><table id="methtbl"></table></div>
+    <div class="src">Source: logs/06.out, outputs/summary_table.csv</div>
+    <h3>Where the exposed residents are (method C, BAG-allocated)</h3>
+    <div id="top10"></div>
+    <div class="src">Source: outputs/top10_exposed_buurten.csv. The five most exposed buurten hold <span id="top5"></span> of all exposed residents; <span id="zeroc"></span> of the 243 buurten have none.</div>
+    <h3>Age of the exposed residents</h3>
+    <div class="scroll"><table id="agetbl"></table></div>
+    <div class="src">Source: outputs/exposed_by_age_group.csv</div>
+    <h3>How much of the 100 m grid is hidden by CBS suppression</h3>
+    <p class="sub">Share of the 9,121 study cells where a field is missing (CBS hides small counts). Population is almost complete; the subgroup fields that would give age, household and income detail are mostly hidden. Fields with a share above 1% are shown.</p>
+    <div id="suppr"></div>
+    <div class="src">Source: outputs/grid_suppression_rates.csv</div>
+  </section>
+
+  <section>
+    <h2>The BAG is today's snapshot: how 2021 was reconstructed</h2>
+    <p class="sub">The BAG registry is served only as it is today, with no historical archive. Buildings and address objects were therefore filtered to an approximate situation on 14 July 2021 from their status, document date and construction year (script <code>05_building_exposure.py</code>). This is an approximation, and a building demolished before the event but registered with a later document date could be misclassified.</p>
+    <div class="scroll"><table id="snaptbl"></table></div>
+    <div class="src">Source: logs/run.log (05_building_exposure), logs/06.out</div>
+  </section>
+
+  <section>
+    <h2>Is a regression on this sample defensible?</h2>
+    <p class="sub">A natural next step is a geographically weighted regression (GWR, MGWR) of the share of residents in the flooded area on neighbourhood characteristics. That test was run on the Limburg 2021 buurten. The answer is no, and the numbers show why.</p>
+    <div class="scroll"><table id="regtbl"></table></div>
+    <div class="src">Source: logs/07.out, logs/08.out</div>
+    <h3>Distribution of the response across the <span id="nc"></span> complete cases</h3>
+    <div class="key"><span>Share of the buurt's residents inside the flood extent, in bins of 5 percentage points. The bar at 0 is cut at the top; its real height is shown.</span></div>
+    <svg id="hist" viewBox="0 0 640 200" style="width:100%;max-width:760px;height:auto" role="img" aria-label="Histogram of the exposed share of residents per buurt"></svg>
+    <div class="src">Source: outputs/buurt_analysis_env.csv (share_C, complete cases)</div>
+    <h3>Collinearity (VIF) and rank correlation with exposure</h3>
+    <div class="scroll"><table id="viftbl"></table></div>
+    <div class="src">Source: outputs/vif.csv; Spearman recomputed from outputs/buurt_analysis_env.csv on the same sample as script 07. Only elevation relates to exposure (coefficient p &lt; 0.001 in the logit, outputs/logit_any_exposure.csv): buurten that flood are the low ones.</div>
+    <div class="note">Conclusion carried by the project report: the exposure and vulnerability map is supported, a stand-alone GWR/MGWR on this sample is not. The units were chosen because they touch the flood, most have zero exposure, and only 193 have complete predictors.</div>
+  </section>
+
+
+  <section>
+    <h2>Limits you should know before using a number</h2>
+    <ul class="plain" id="limits"></ul>
+    <h3>Reproducibility frictions</h3>
+    <ul class="plain" id="frict"></ul>
+    <p class="sub" style="margin-top:12px">Display note: the layers on the map (modelled areas, depth classes, buildings, land use, soil, roads, water) are simplified copies made by <code>build/build_web_assets.py</code> so a browser can draw them. Holes under 3,000 m² in the scenario polygons are filled and lines and outlines are simplified. No figure on this page or on the map is computed from the simplified copies, and the research data were not changed.</p>
+  </section>
+
+  <section>
+    <h2>Data sources</h2>
+    <p class="sub">All files below were downloaded and opened in the verification run. Sizes are the sizes of the raw files.</p>
+    <div class="scroll"><table id="srctbl"></table></div>
+    <div class="src">Source: outputs/verified_data_inventory.csv. The 4TU DOI is 10.4121/16817389.v1 (<a href="https://doi.org/10.4121/16817389.v1" rel="noopener">link</a>). Basemap © OpenStreetMap contributors © CARTO.</div>
+  </section>
+</main>
+<div class="tip" id="tip"></div>
+<script>
+(function(){
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const DARK=css('--ground').toLowerCase()==='#141817';
+const $=id=>document.getElementById(id);
+const tb=$('theme');tb.textContent=DARK?'☀ Light mode':'☾ Dark mode';
+tb.onclick=()=>{try{localStorage.setItem('theme',DARK?'light':'dark');}catch(e){}location.reload();};
+const tip=$('tip');
+const showTip=(e,h)=>{tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';tip.innerHTML=h;};
+const hideTip=()=>tip.style.display='none';
+const n0=v=>Math.round(v).toLocaleString(), p0=v=>(v*100).toFixed(0)+'%', p1=v=>(v*100).toFixed(1)+'%';
+Promise.all([fetch('../data/facts.json').then(r=>r.json()),fetch('../data/window.json').then(r=>r.json())]).then(([F,W])=>{
+const f=k=>F[k].v;
+const table=(sel,head,rows,opt={})=>{const t=d3.select(sel);t.html('');
+  t.append('thead').append('tr').selectAll('th').data(head).join('th').attr('class',(d,i)=>opt.left&&opt.left.includes(i)?'l':null).text(d=>d);
+  t.append('tbody').selectAll('tr').data(rows).join('tr').selectAll('td').data(r=>r).join('td').attr('class',(d,i)=>(opt.left&&opt.left.includes(i)?'l ':'')+(opt.us&&opt.us.includes(i)?'us':'')).html(d=>d);};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+$('lede').textContent=`Limburg, July 2021. How the ${f('n_buurten')} buurten, ${f('cell_pop').toLocaleString()} residents in ${f('n_cells').toLocaleString()} 100 m cells, ${f('pand_snap').toLocaleString()} buildings and two kinds of flood evidence were joined, what each step costs in accuracy, and where the method stops.`;
+
+// ---- stats
+const stat=(v,l,cls)=>`<div class="${cls||''}"><strong>${v}</strong><span>${l}</span></div>`;
+$('stats').innerHTML=[
+  stat(f('n_buurten'),'buurten touching the observed extent (CBS 2021)'),
+  stat(n0(f('pop_buurten')),'residents in those buurten (CBS key figures)'),
+  stat(n0(f('res_in_extent')),'residential buildings in the observed extent (BAG)'),
+  stat(n0(f('grid_c')),'residents in the extent, BAG-allocated (C)'),
+  stat(n0(f('grid_a')),'residents in the extent, area-weighted (A)'),
+  stat(n0(f('grid_b')),'residents in the extent, cell centre (B)'),
+  stat(p0(F.cap.v.find(r=>r.T===100&&r.buffer_m===2).share_caught),'of those buildings caught by the 100-yr scenario','mod'),
+  stat(p0(F.cap.v.find(r=>r.T===1000&&r.buffer_m===2).share_caught),'caught by the 1,000-yr scenario','mod')
+].join('');
+// ---- small multiples (Valkenburg window), planar projection of RD metres
+$('winname').textContent=`${W.name} (${W.gem})`;
+const half=W.R, cx=W.center[0], cy=W.center[1], S=300;
+const box={type:'Polygon',coordinates:[[[cx-half,cy-half],[cx+half,cy-half],[cx+half,cy+half],[cx-half,cy+half],[cx-half,cy-half]]]};
+const proj=d3.geoIdentity().reflectY(true).fitSize([S,S],box),path=d3.geoPath(proj);
+const gj=g=>({type:g.t,coordinates:g.c});
+const fl=W.bld.filter(b=>b.k===2);
+const panels=[
+  {h:'BAG buildings, 2021 snapshot',cls:'',p:`${n0(W.bld.length)} buildings in the window; ${fl.length} residential buildings flooded in July 2021`,mode:'class',obs:false,ror:null},
+  {h:'Observed extent, July 2021',cls:'obs',p:'4TU, preliminary reconstruction',mode:'class',obs:true,ror:null}
+].concat([10,100,1000,10000].map((T,i)=>({h:`Modelled, T = ${T.toLocaleString()} yr`,cls:'mod',p:`${fl.filter(b=>b.cap[i]).length} of the ${fl.length} flooded residential buildings in this window are caught`,mode:'cap',obs:false,ror:'ror'+T,ci:i})));
+const card=d3.select('#small').selectAll('div').data(panels).join('div').attr('class','mapcard');
+card.append('h3').attr('class',d=>d.cls).text(d=>d.h);card.append('p').text(d=>d.p);
+const defs=d3.select('body').append('svg').attr('width',0).attr('height',0).style('position','absolute').append('defs');
+defs.append('pattern').attr('id','hatch').attr('width',6).attr('height',6).attr('patternUnits','userSpaceOnUse').attr('patternTransform','rotate(45)').append('line').attr('x1',0).attr('y1',0).attr('x2',0).attr('y2',6).attr('stroke',css('--mod')).attr('stroke-width',2);
+card.each(function(d){
+  const svg=d3.select(this).append('svg').attr('viewBox',`0 0 ${S} ${S}`).attr('role','img').attr('aria-label',d.h);
+  if(d.obs)W.obs.forEach(g=>svg.append('path').attr('d',path(gj(g))).attr('fill',css('--obs')).attr('fill-opacity',.4).attr('stroke','#1c5cab').attr('stroke-width',.6));
+  if(d.ror)(W[d.ror]||[]).forEach(g=>{svg.append('path').attr('d',path(gj(g))).attr('fill','url(#hatch)').attr('stroke',css('--mod')).attr('stroke-width',1).attr('stroke-dasharray','4 2');});
+  const col=b=>{if(d.mode==='cap')return b.k===2?(b.cap[d.ci]?'#d62728':'#f2c200'):b.k===1?'#9a9a9a':null;
+    return b.k===2?'#d62728':b.k===3?'#8c564b':b.k===1?'#9a9a9a':(DARK?'#4a4f4d':'#d0d0d0');};
+  const g=svg.append('g');
+  W.bld.forEach(b=>{const c=col(b);if(!c)return;g.append('path').attr('d',path(gj(b.g))).attr('fill',c).attr('stroke','none');});
+  const L=1000/(2*half)*S;
+  svg.append('line').attr('x1',8).attr('x2',8+L).attr('y1',S-10).attr('y2',S-10).attr('stroke','var(--ink)').attr('stroke-width',2);
+  svg.append('text').attr('x',8).attr('y',S-15).attr('font-size',9).attr('fill','var(--muted)').text('1 km');
+});
+// ---- capture tables
+const T4=[10,100,1000,10000];
+table('#captbl',['Scenario','buffer 0 m','buffer 2 m (used)','buffer 5 m'],T4.map(T=>[`T = ${T.toLocaleString()} yr`,...[0,2,5].map(b=>{const r=F.cap.v.find(r=>r.T===T&&r.buffer_m===b);return `${p1(r.share_caught)}<small>${r.caught.toLocaleString()} of ${r.flooded_res_bldgs.toLocaleString()}</small>`;})]),{us:[2]});
+table('#rivtbl',['Observed extent from','Buildings','T = 10','T = 100','T = 1,000','T = 10,000'],F.cap_river.v.map(r=>[({Geul_all:'Geul',Maas:'Maas',Roer:'Roer'})[r.src]||r.src.replace('edge (touches extent only)','Edge (touches the extent only)'),r.n.toLocaleString(),p0(r.t10_b2),p0(r.t100_b2),p0(r.t1000_b2),p0(r.t10000_b2)]));
+table('#areatbl',['Scenario','Modelled area','Overlap with observed','Observed area covered','Scenario area flooded in 2021'],F.model_area.v.map(r=>[`T = ${r.T.toLocaleString()} yr`,r.modelled_zone_km2.toFixed(0)+' km²',r.area_overlap_km2.toFixed(1)+' km²',p0(r.frac_obs_area_covered),p1(r.frac_model_area_flooded_in_2021)]));
+const DEP=['minder dan 0,5 m','tussen 0,5 en 1,0 m','tussen 1,0 en 1,5 m','tussen 1,5 en 2,0 m','tussen 2,0 en 5,0 m','meer dan 5,0 m'],DL=['under 0.5 m','0.5–1.0 m','1.0–1.5 m','1.5–2.0 m','2.0–5.0 m','over 5 m'];
+table('#deptbl',['Scenario','Buildings in the scenario zone','Outside the zone',...DL],F.depth.v.map(r=>[`T = ${r.T.toLocaleString()} yr`,r.in_model_zone.toLocaleString(),r.outside_model_zone.toLocaleString(),...DEP.map(k=>r[k].toLocaleString())]));
+// ---- chain
+const CH=[
+ ['Raw data','4TU extents, CBS grid, BRO soil','Manual downloads (curl)',false],
+ ['Study area','01_flood_and_study_area.py',`${f('n_study_buurten')} buurten; union of observed extents ${f('union_km2').toFixed(1)} km²`,false],
+ ['BAG','02_fetch_bag.py, 02b_bag_rebuild.py',`${f('bag_tiles')} tiles; ${f('pand_total').toLocaleString()} buildings, ${f('vbo_total').toLocaleString()} address objects`,false],
+ ['Modelled hazard','03_fetch_modelled_hazard.py','ROR depth and flooded-area layers, T = 10 to 10,000',true],
+ ['Environment','04_fetch_environment.py',`AHN4 DTM, BBG 2017 (${f('bbg_n').toLocaleString()}), NWB (${f('nwb_n').toLocaleString()}), Top10NL water (${f('water_n').toLocaleString()})`,false],
+ ['Building exposure','05_building_exposure.py, 05b_modelled_comparison.py',`2021 snapshot; ${f('res_in_extent').toLocaleString()} residential buildings in the extent; scenario comparison`,true],
+ ['Grid exposure','06_grid_exposure.py',`Methods A, B, C; BAG vs CBS dwellings r = ${f('bag_cbs_corr')}`,false],
+ ['Buurt dataset','07_buurt_dataset_and_diagnostics.py',`Response distribution, VIF, Moran's I, OLS and fractional logit on ${f('n_complete')} complete cases`,false],
+ ['Environment + models','08_env_and_models.py','Land use, soil, roads per buurt; GWR, MGWR, logit feasibility',false],
+ ['Map + summary','09_map_and_summary.py','Summary table, top-10, modelled depth at buildings, the map',false],
+ ['Inventory + age','10_inventory_and_age.py','File inventory; exposed by age group',false]];
+d3.select('#chain').selectAll('li').data(CH).join('li').attr('class',d=>d[3]?'mod':null).html(d=>`<b>${esc(d[0])}</b><small><code>${esc(d[1])}</code></small><small>${esc(d[2])}</small>`);
+// ---- methods
+table('#methtbl',['Method','Exposed residents','How'],[
+  ['A. Area-weighted',n0(f('grid_a')),'Cell residents × the share of the cell inside the extent. Assumes uniform density in the cell.'],
+  ['B. Cell centre',n0(f('grid_b')),'All residents of a cell whose centre is inside the extent.'],
+  ['C. BAG-allocated (used on the map)',n0(f('grid_c')),'Cell residents × (flooded dwellings ÷ dwellings in the cell). Assumes equal occupancy per dwelling.']
+],{left:[0,2],us:[1]});
+// ---- top10
+{const rows=F.top10.v,w=d3.scaleLinear().domain([0,d3.max(rows,r=>r.popC)]).range([0,260]);
+ $('top10').innerHTML=`<div class="scroll"><table style="min-width:560px"><thead><tr><th>Buurt</th><th>Municipality</th><th>Residents</th><th>Exposed (C)</th><th>Exposed (A)</th><th>Share of buurt (C)</th><th class="l"></th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.buurtnaam)}</td><td class="l">${esc(r.gemeentenaam)}</td><td>${n0(r.pop_kf)}</td><td class="us">${n0(r.popC)}</td><td>${n0(r.popA)}</td><td>${p0(r.share_C)}</td><td class="l"><svg width="270" height="12"><rect width="${w(r.popC)}" height="10" rx="2" fill="var(--obs)"/></svg></td></tr>`).join('')}</tbody></table></div>`;}
+$('top5').textContent=f('top5').toFixed(1)+'%';$('zeroc').textContent=f('n_zero_C');
+table('#agetbl',['Group','Exposed estimate','Coverage of the exposed','How'],F.age.v.map(r=>[r.group,n0(r.exposed_estimate),p0(r.coverage_of_exposed_pop),esc(r.note)]),{left:[3]});
+// ---- suppression
+{const rows=F.suppression.v.filter(r=>r.share_missing>0.01).sort((a,b)=>b.share_missing-a.share_missing).slice(0,30),H=16,w=d3.scaleLinear().domain([0,1]).range([0,260]);
+ const svg=d3.select('#suppr').append('svg').attr('viewBox',`0 0 640 ${rows.length*H+4}`).style('width','100%').style('max-width','760px').style('height','auto').attr('role','img').attr('aria-label','Share of 100 m cells with a suppressed value, by field');
+ rows.forEach((r,i)=>{svg.append('text').attr('x',360).attr('y',i*H+11).attr('text-anchor','end').attr('font-size',10.5).attr('fill','var(--ink)').text(r.field);
+  svg.append('rect').attr('x',368).attr('y',i*H+2).attr('width',w(r.share_missing)).attr('height',H-5).attr('rx',2).attr('fill',r.share_missing>.5?'var(--b)':'var(--obs)').attr('fill-opacity',.8);
+  svg.append('text').attr('x',368+w(r.share_missing)+4).attr('y',i*H+11).attr('font-size',10).attr('fill','var(--muted)').text(p0(r.share_missing));});}
+// ---- snapshot
+table('#snaptbl',['Item','Count','What it means'],[
+ ['Buildings (pand) fetched',n0(f('pand_total')),'All building records returned for the study tiles'],
+ ['Kept in the 2021 snapshot',n0(f('pand_snap')),'Alive on the event date by status, document date and construction year'],
+ ['…of which demolished later but kept',n0(f('pand_demol_kept')),'Standing in July 2021, demolished since'],
+ ['Built after the event, excluded',n0(f('pand_future')),'Registered as constructed after July 2021'],
+ ['Address objects (verblijfsobject) fetched',n0(f('vbo_total')),''],
+ ['Kept in the 2021 snapshot',n0(f('vbo_snap')),''],
+ ['…with a dwelling function (woonfunctie)',n0(f('vbo_res')),'The rule used to call a building residential'],
+ ['Dwellings in BAG vs CBS grid',`r = ${f('bag_cbs_corr')}`,`Sum BAG ${f('bag_sum').toLocaleString()} vs CBS ${f('cbs_sum').toLocaleString()}; same count in ${f('bag_cbs_exact')}% of cells, within ±1 in ${f('bag_cbs_pm1')}%`]
+],{left:[0,2]});
+// ---- regression
+table('#regtbl',['Check','Value','Reading'],[
+ ['Buurten with the response and all predictors',f('n_complete'),`of ${f('n_resp')} buurten with a response`],
+ ['Buurten with zero exposure',`${f('resp_zero')} of ${f('n_resp')} (${f('resp_zero_pct')}%)`,`${f('zero_share_complete')}% among the complete cases; only ${f('nonzero_complete')} have any exposure`],
+ ['Kurtosis of the response',f('gwr_kurt'),'Very heavy tails; a few buurten carry nearly all exposure'],
+ ['OLS R² / adjusted R²',`${f('ols_r2')} / ${f('ols_adjr2')}`,'Low'],
+ ['GWR bandwidth',`${f('gwr_bw')} of ${f('n_complete')} neighbours`,'Effectively global: no local variation to find'],
+ ['GWR R² / adj. R² / AICc',`${f('gwr_r2')} / ${f('gwr_adjr2')} / ${f('gwr_aicc')}`,''],
+ ['MGWR R² / adj. R² / AICc',`${f('mgwr_r2')} / ${f('mgwr_adjr2')} / ${f('mgwr_aicc')}`,'Not better than GWR'],
+ ["Moran's I of the response",`${f('moran_resp')} (p = ${f('moran_resp_p')})`,`Residuals: ${f('moran_resid')}`],
+ ['Logit for any exposure, pseudo R²',f('logit_pseudo_r2'),`${f('logit_events')} events`]
+],{left:[0,2]});
+$('nc').textContent=f('n_complete');
+{const v=F.hist.v,bins=d3.bin().domain([0,1]).thresholds(d3.range(.05,1,.05))(v),W_=640,H_=200,x=d3.scaleLinear().domain([0,1]).range([40,W_-10]),
+   y=d3.scaleLinear().domain([0,d3.max(bins.slice(1),b=>b.length)*1.3]).range([H_-26,6]);
+ const svg=d3.select('#hist');
+ bins.forEach((b,i)=>{const hh=Math.min(y(0)-y(b.length),y(0)-6);svg.append('rect').attr('x',x(b.x0)+1).attr('y',y(0)-hh).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2)).attr('height',hh).attr('fill',i===0?'var(--b)':'var(--obs)').attr('fill-opacity',.8)
+   .on('mousemove',e=>showTip(e,`${(b.x0*100).toFixed(0)}–${(b.x1*100).toFixed(0)}% exposed: <strong>${b.length}</strong> buurten`)).on('mouseleave',hideTip);});
+ svg.append('text').attr('x',x(0)+x(.05)-x(0)+4).attr('y',16).attr('font-size',10.5).attr('fill','var(--b)').text(`${bins[0].length} buurten (${p0(bins[0].length/v.length)}) are at or below 5%, bar cut`);
+ d3.range(0,1.01,.25).forEach(t=>svg.append('text').attr('x',x(t)).attr('y',H_-8).attr('text-anchor','middle').attr('font-size',10).attr('fill','var(--muted)').text(p0(t)));
+ svg.append('line').attr('x1',40).attr('x2',W_-10).attr('y1',y(0)).attr('y2',y(0)).attr('stroke','var(--rule)');}
+{const sp=F.spearman.v,names={pct_65p:'Aged 65+',pct_0_15:'Aged 0–14',pct_single_hh:'Single-person households',pct_low_inc_pers:'Low-income persons',benefits_per100:'Benefits per 100',cars_per_hh:'Cars per household',pct_owner:'Owner-occupied',pct_multifam:'Multi-family',density:'Density',dist_gp_km:'Distance to GP',elev_mean:'Mean elevation'};
+ const lg=Object.fromEntries(F.logit.v.map(r=>[r['Unnamed: 0'],r])),vf=Object.fromEntries(F.vif.v.map(r=>[r['Unnamed: 0'],r.VIF]));
+ table('#viftbl',['Predictor','VIF','Spearman with exposure','Logit coefficient (any exposure)','p','Missing in the response sample'],Object.keys(names).map(k=>[names[k],vf[k].toFixed(2),sp[k].toFixed(3),lg[k].coef.toFixed(3),lg[k].p<.001?'&lt; 0.001':lg[k].p.toFixed(3),p0(F.pred_missing.v[k])]));}
+// ---- limits
+d3.select('#limits').selectAll('li').data([
+ 'The observed extent is a reconstruction ("manually improved by local knowledge and photographs"). Flooded dwellings inherit its error and its raster-like edges: a point test and a footprint test differ by 43% of dwellings.',
+ 'Exposure is not impact. A dwelling touching the extent may have been dry inside, and the extent has no depth.',
+ 'Residents are allocated with equal occupancy per dwelling inside each 100 m cell. Multi-storey blocks and vacant dwellings are averaged.',
+ 'CBS suppresses and rounds small counts (the 5-resident rule, counts rounded to 5 or 10), so subgroup counts are mostly missing at 100 m.',
+ 'Age on the map is a buurt-level proxy applied to exposed residents (ecological fallacy). Only about a quarter of the exposed 0–14 and 71% of the exposed 65+ can be read directly from non-suppressed cells.',
+ 'The BAG 2021 situation is an approximation (see above).',
+ `The Geul file has no coordinate system; EPSG:28992 was assumed. Its attributes DN and wdp are undocumented. If only DN = 1 is counted, residential buildings in the extent drop by 16%.`,
+ 'Units were chosen because they touch the flood, so any regression is conditional on exposure.',
+ 'The modelled hazard describes breach scenarios; the observed event is compared with it only as a test of how well design scenarios predict a real flood.',
+ `Buurt statistics and the 100 m grid are not perfectly reconciled (ratio ${f('buurt_ratio')}).`,
+ 'The first modelled-versus-observed test (point in polygon) was biased by holes at building footprints and was replaced by the buffer rule. Its figures are not used here.',
+ 'No validation against reported evacuated or affected numbers was possible.'
+]).join('li').text(d=>d);
+d3.select('#frict').selectAll('li').data([
+ 'PDOK serves large files through ATOM downloads without HTTP range support. A connection reset near 450–500 MB restarts the 553 MB grid download from zero.',
+ 'The PDOK OGC API does not support a properties= parameter, so BAG features come with every field and must be filtered after download (378 tiles of 2 km were fetched and cached).',
+ 'The BAG is served only as today\'s snapshot; there is no historical archive.',
+ 'The modelled hazard layers are served from a third-party host (LDO geoserver, Nelen & Schuurmans). LIWO was unreachable from the test network and older PDOK ROR addresses return 404.',
+ 'The three 4TU zips, the CBS grid and the soil file were fetched with curl; every other step is scripted. The pipeline was re-run from cached raw files, not re-executed from an empty folder after the final fixes.'
+]).join('li').text(d=>d);
+// ---- sources
+table('#srctbl',['Dataset','Provider','Format','Features','Size','Licence','Address'],F.inventory.v.map(r=>{
+  const m=r.url.match(/^https?:\/\/[^\s<]+/);const href=m&&!r.url.includes('<file-id>')?m[0]:null;
+  const label=esc(r.url);
+  return [esc(r.dataset),esc(r.provider),esc(r.format),esc(r.features),r.size_MB>=1?r.size_MB.toLocaleString(undefined,{maximumFractionDigits:1})+' MB':'<1 MB',esc(r.licence),href?`<a href="${esc(href)}" rel="noopener">${label}</a>`:label];}),{left:[0,1,2,5,6]});
+}).catch(e=>{const n=$('loaderr');n.style.display='block';n.textContent='The data files could not be loaded ('+e.message+'). Serve the nl_site folder over HTTP, for example with: python -m http.server';console.error(e);});
+})();
+</script>
+</body>
+</html>

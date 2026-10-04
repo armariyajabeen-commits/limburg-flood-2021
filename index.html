@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Who lived in the flood path, Limburg 2021</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a5c'/%3E%3Cpath d='M4 20q4-5 8 0t8 0 8 0v8H4z' fill='%232a78d6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#1b3a5c">
+<script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root{
+  --ground:#F4F5F1; --panel:#FCFCFB; --ink:#16201F; --muted:#5B6664; --rule:#DCE0DA;
+  --a:#4A3AA7; --b:#EB6834; --focus:#2A78D6; --shadow:0 1px 2px rgba(20,30,30,.08),0 4px 14px rgba(20,30,30,.10);
+  --obs:#2a78d6; --mod:#0f7b8a;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#141817; --panel:#1B1F1E; --ink:#ECEFEC; --muted:#A3ADAA; --rule:#2F3634;
+  --a:#9085E9; --b:#D95926; --focus:#86B6EF; --mod:#3fb6c4; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.45);}}
+:root[data-theme="dark"]{
+  --ground:#141817; --panel:#1B1F1E; --ink:#ECEFEC; --muted:#A3ADAA; --rule:#2F3634;
+  --a:#9085E9; --b:#D95926; --focus:#86B6EF; --mod:#3fb6c4; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.45);}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--ground);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 430px;height:100%}
+.mapcol{position:relative;display:flex;flex-direction:column;min-height:0}
+.bar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--rule);background:var(--panel)}
+.bar label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.bar select,.bar input{font:inherit;font-size:13.5px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:8px;padding:6px 10px;min-width:180px}
+.bar select#metric{min-width:270px}
+.bar .sp{flex:1}
+.bar a.btn,.bar button.btn{font:inherit;font-size:13px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;text-decoration:none;cursor:pointer;white-space:nowrap}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+#map{flex:1;min-height:0;position:relative}
+.card{position:absolute;z-index:2;background:var(--panel);border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);font-size:12.5px}
+.legend{left:12px;bottom:28px;padding:10px 12px;min-width:200px;max-width:280px;max-height:calc(100% - 90px);overflow-y:auto}
+.legend h3{font-size:12.5px;font-weight:600;margin:0 0 2px}
+.legend h4{font-size:11px;font-weight:600;margin:0 0 3px;letter-spacing:.04em;text-transform:uppercase}
+.legend h4.mod{color:var(--mod)} .legend h4.obs{color:var(--obs)}
+.legend .sub{color:var(--muted);font-size:11.5px;margin:0 0 8px}
+.legend .row{display:flex;align-items:center;gap:8px;margin:3px 0;color:var(--ink)}
+.legend .sw{width:22px;height:12px;border-radius:3px;flex:none;border:1px solid rgba(0,0,0,.06)}
+.legend .sep{border-top:1px solid var(--rule);margin:7px 0 5px}
+.legend .sw.hol{background:transparent;border:1px dashed var(--muted)}
+.legend .sw.obs{background:rgba(42,120,214,.5);border:1px solid #1c5cab}
+.legend .sw.mod{background:repeating-linear-gradient(45deg,rgba(15,123,138,.55) 0 2px,transparent 2px 5px);border:1px dashed var(--mod)}
+.ctrl{right:12px;top:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-width:215px;max-width:260px;max-height:calc(100% - 24px);overflow-y:auto}
+.ctrl label{display:flex;align-items:center;gap:8px;color:var(--ink)}
+.ctrl label.dis{color:var(--muted)}
+.ctrl input[type=range]{width:110px;accent-color:var(--ink)}
+.ctrl select{font:inherit;font-size:12px;color:var(--ink);background:var(--ground);border:1px solid var(--rule);border-radius:6px;padding:2px 4px;max-width:100%}
+.ctrl button{font:inherit;font-size:12px;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer;align-self:flex-start}
+.ctrl .grp{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:4px;padding-top:6px;border-top:1px solid var(--rule)}
+.ctrl .grp.obs{color:var(--obs)} .ctrl .grp.mod{color:var(--mod)} .ctrl .grp.ctx{color:var(--muted)}
+.ctrl .grp:first-of-type{margin-top:0;border-top:0;padding-top:0}
+.ctrl .sub2{margin-left:26px;display:flex;flex-direction:column;gap:3px;color:var(--muted);font-size:11.5px}
+.hint{left:12px;top:12px;padding:8px 12px;max-width:300px;pointer-events:none}
+.tip{position:absolute;z-index:3;pointer-events:none;background:var(--panel);border:1px solid var(--rule);padding:7px 10px;border-radius:8px;font-size:12px;box-shadow:var(--shadow);display:none;max-width:270px}
+.tip strong{font-weight:600}
+.pin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);cursor:grab}
+.pin.a{background:var(--a)} .pin.b{background:var(--b)}
+.maplibregl-ctrl-attrib{font-size:10.5px}
+.loading{font-size:11px;color:var(--muted)}
+aside{background:var(--panel);border-left:1px solid var(--rule);overflow-y:auto;padding:20px 22px 28px}
+h1{font-size:21px;line-height:1.2;margin:0 0 6px;font-weight:700;letter-spacing:-.01em}
+.lede{color:var(--muted);margin:0 0 18px;max-width:60ch}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.who div{border-top:3px solid;padding-top:6px}
+.who .a{border-color:var(--a)} .who .b{border-color:var(--b)}
+.who strong{display:block;font-size:22px;font-weight:700;line-height:1.1}
+.who span{color:var(--muted);font-size:12px}
+h2{font-size:14px;font-weight:600;margin:22px 0 8px}
+.note{font-size:12px;color:var(--muted);margin:6px 0 0}
+#pyr{width:100%;display:block}
+.pyr-key{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.pyr-key i{display:inline-block;width:14px;height:9px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:right;font-weight:600;font-size:12px;color:var(--muted);padding:4px 0 6px}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 0 6px 8px;border-top:1px solid var(--rule);text-align:right;vertical-align:top}
+td.a,td.b{font-weight:600}
+th.a::after,th.b::after{content:"";display:block;height:3px;border-radius:2px;margin-top:3px}
+th.a::after{background:var(--a)} th.b::after{background:var(--b)}
+td small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+.hi{background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.warn{border-left:3px solid var(--focus);padding:8px 12px;background:color-mix(in srgb,var(--focus) 8%,transparent);font-size:12.5px;margin-top:10px}
+.warn.mod{border-color:var(--mod);background:color-mix(in srgb,var(--mod) 9%,transparent)}
+.chain{display:flex;flex-wrap:wrap;gap:4px;font-size:11px;margin:6px 0 0;padding:0;list-style:none}
+.chain li{border:1px solid var(--rule);border-radius:999px;padding:2px 8px;color:var(--muted)}
+.chain li+li::before{content:"→ ";color:var(--muted)}
+.foot{font-size:11.5px;color:var(--muted);margin-top:22px;border-top:1px solid var(--rule);padding-top:12px}
+.foot p{margin:0 0 6px}
+.foot a{color:var(--ink)}
+@media (max-width:900px){
+  .app{display:block;height:auto}
+  .mapcol{height:82vh;width:100%}
+  aside{border-left:0;border-top:1px solid var(--rule)}
+  .hint{display:none}
+  .bar select#metric{min-width:0;width:100%}
+  .legend{bottom:32px;max-width:200px}
+}
+.mob,.mini{display:none}
+@media (max-width:700px){
+  .bar{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top))}
+  .bar label{font-size:10px;letter-spacing:.03em}
+  .bar label:first-child{grid-column:1/-1}
+  .bar select,.bar input,.bar select#metric{min-width:0;width:100%;font-size:16px;padding:5px 8px}
+  .bar .sp{display:none}
+  .bar a.btn,.bar button.btn{font-size:13px;text-align:center;padding:7px 8px;white-space:normal}
+  .mapcol{height:auto}
+  #map{flex:none;height:68vh;height:68svh;min-height:340px}
+  .card{font-size:13px}
+  .legend{left:8px;bottom:26px;min-width:0;max-width:calc(100% - 70px);padding:7px 10px;max-height:55%}
+  .legend h3{cursor:pointer}
+  .legend.collapsed h3{margin:0}
+  .legend.collapsed h3::after{content:" ▸";color:var(--muted)}
+  .legend:not(.collapsed) h3::after{content:" ▾";color:var(--muted)}
+  .legend.collapsed>:not(h3){display:none}
+  .ctrl{right:8px;top:8px;min-width:0;padding:7px 10px;gap:4px;max-height:calc(100% - 60px);overflow-y:auto;max-width:78%}
+  .ctrl .mob{display:block}
+  .ctrl.collapsed>:not(#layers):not(.keep){display:none}
+  .ctrl input[type=range]{width:90px}
+  .mini{display:flex;gap:10px;left:8px;top:8px;padding:6px 10px;font-size:13px;pointer-events:none}
+  .mini .a b{color:var(--a)} .mini .b b{color:var(--b)}
+  aside{padding:16px 16px calc(24px + env(safe-area-inset-bottom))}
+  .foot{overflow-wrap:anywhere}
+}
+@media (pointer:coarse){
+  .pin{width:34px;height:34px;font-size:14px}
+  .ctrl label{min-height:30px}
+  .ctrl input[type=checkbox]{width:18px;height:18px}
+}
+.app{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="mapcol">
+    <div class="bar">
+      <label>Show on map<select id="metric" aria-label="Variable shown on the map"></select></label>
+      <label>Municipality<select id="gemsel" aria-label="Filter by municipality (gemeente)"></select></label>
+      <label>Buurt<select id="subsel" aria-label="Filter by buurt (neighbourhood)"></select></label>
+      <span class="sp"></span>
+      <a class="btn" href="analysis/">Evidence &amp; method →</a>
+      <button class="btn" id="theme" type="button"></button>
+    </div>
+    <div id="map">
+      <div class="card hint" id="hint">Click the map to place area A, then area B. Drag either pin to move it.</div>
+      <div class="card legend" id="legend" aria-live="polite"></div>
+      <div class="card mini" id="mini" aria-live="polite"><span class="a">A <b id="miniA">–</b></span><span class="b">B <b id="miniB">–</b></span></div>
+      <div class="card ctrl" id="ctrl">
+        <button id="layers" class="mob" type="button" aria-expanded="false">Layers ▾</button>
+        <label class="keep">Radius <input type="range" id="rad" min="300" max="2000" step="50" value="800"> <span id="radv">800 m</span></label>
+        <div class="grp obs">Observed (July 2021)</div>
+        <label title="4TU.ResearchData, preliminary reconstruction of the maximum flooded extent"><input type="checkbox" id="obs" checked> Flood extent, observed</label>
+        <div class="grp mod">Modelled scenarios, not observed</div>
+        <label title="ROR / Floods Directive hazard map, dike-breach scenario"><input type="checkbox" id="ror"> Flooded area, scenario</label>
+        <div class="sub2"><label>Return period <select id="tsel" aria-label="Scenario return period"><option value="10">T = 10 yr</option><option value="100" selected>T = 100 yr</option><option value="1000">T = 1,000 yr</option><option value="10000">T = 10,000 yr</option></select></label></div>
+        <label><input type="checkbox" id="dep"> Water depth classes, scenario <span class="loading" id="depl"></span></label>
+        <div class="grp ctx">Exposure data</div>
+        <label title="BAG buildings within 150 m of the observed extent, 50,068 of them"><input type="checkbox" id="bld"> Buildings (BAG) <span class="loading" id="bldl"></span></label>
+        <div class="sub2" id="bldmode" style="display:none"><label>Colour by <select id="bmode" aria-label="Building colouring"><option value="class">Flooded in 2021 or not</option><option value="cap">Caught by the scenario?</option></select></label></div>
+        <label><input type="checkbox" id="grid"> 100 m grid, exposed residents <span class="loading" id="gridl"></span></label>
+        <label><input type="checkbox" id="sb" checked> Buurt boundaries</label>
+        <div class="grp ctx">Context</div>
+        <label title="AHN4 terrain model, 10 m, hillshade"><input type="checkbox" id="relief"> Terrain relief (AHN4)</label>
+        <label><input type="checkbox" id="bbg"> Land use (BBG 2017) <span class="loading" id="bbgl"></span></label>
+        <label><input type="checkbox" id="soil"> Soil (BRO) <span class="loading" id="soill"></span></label>
+        <label><input type="checkbox" id="water"> Water (Top10NL) <span class="loading" id="waterl"></span></label>
+        <label><input type="checkbox" id="roads"> Roads (NWB) <span class="loading" id="roadsl"></span></label>
+        <label><input type="checkbox" id="bm" checked> Basemap</label>
+        <button id="reset">Clear areas</button>
+      </div>
+      <div class="tip" id="tip"></div>
+    </div>
+  </div>
+  <aside>
+    <h1>Who lived in the flood path</h1>
+    <p class="lede" id="lede">Loading…</p>
+    <div class="who">
+      <div class="a"><span>Area A</span><strong id="popA">–</strong><span id="subA">Click the map</span></div>
+      <div class="b"><span>Area B</span><strong id="popB">–</strong><span id="subB">then click again</span></div>
+    </div>
+    <h2>Age profile, share of residents</h2>
+    <div class="pyr-key"><span><i style="background:var(--a)"></i>Area A</span><span><i style="border:2px solid var(--b);height:9px"></i>Area B</span><span><i style="background:var(--rule)"></i><span class="alllab"></span></span></div>
+    <svg id="pyr" viewBox="0 0 400 200" role="img" aria-label="Age profile in five groups, comparing area A, area B and the whole study area"></svg>
+    <p class="note">Five age groups from the CBS buurt statistics, weighted by the residents each circle counts in each buurt. This is a buurt-level proxy (an ecological estimate): the 100 m grid suppresses small counts, so a direct age split is only known for part of the people.</p>
+    <p class="note">On the map, each buurt a circle touches is shaded in that circle's colour. The darker the shade, the larger the share of its 100 m cells whose centre lies inside the circle.</p>
+    <h2>Exposure and profile</h2>
+    <table id="tbl"><colgroup><col><col style='width:62px'><col style='width:62px'><col style='width:90px'></colgroup><thead><tr><th>Indicator</th><th class="a">A</th><th class="b">B</th><th style='padding-left:8px' class="alllab"></th></tr></thead><tbody></tbody></table>
+    <div class="warn" id="obsnote"><b>Observed.</b> The blue extent is the maximum flooded area of July 2021 (4TU.ResearchData). It is a preliminary reconstruction, partly modelled and improved by local knowledge and photographs, not a survey. "Exposed" below means inside that extent.</div>
+    <div class="warn mod"><b>Modelled.</b> The hatched teal layers (and the water-depth classes) are dike-breach scenarios from the national hazard maps (T = 10 to 10,000 years). They are design scenarios, not a record of what happened in 2021: they are drawn hatched and listed separately, and none of the exposure figures use them.</div>
+    <h2>Where the numbers come from</h2>
+    <ul class="chain" id="chain"></ul>
+    <div class="foot">
+      <p>Population: CBS Vierkantstatistieken 100 m, 2021 (CC BY 4.0, CBS attribution required). Buurten: CBS Wijken en Buurten 2021 (CC0) via PDOK. Buildings and dwellings: BAG, Kadaster via PDOK OGC API (CC0), see the note on the 2021 snapshot below. Observed extent: Slager, de Moel &amp; de Jong, 4TU.ResearchData, doi:10.4121/16817389.v1 (CC BY 4.0). Scenario layers: ROR hazard maps from the LDO geoserver (licence unclear). Terrain: AHN4 DTM via PDOK WCS. Land use: CBS BBG 2017. Roads: NWB. Water: Top10NL. Soil: BRO Bodemkaart. Basemap © OpenStreetMap contributors © CARTO.</p>
+      <p>The BAG is served only as today's snapshot. The 2021 situation was reconstructed approximately from status, document date and construction year, so some buildings may differ from 2021. Circle figures count 100 m cells whose centre is inside the circle. "Exposed residents (C)" allocates each cell's residents to its BAG dwellings and counts dwellings inside the observed extent, assuming equal occupancy per dwelling in a cell; "(A)" weights each cell by the part of it inside the extent.</p>
+      <p>The map layers for the modelled scenarios, buildings, land use, soil, water and roads are simplified for display only (holes under 3,000 m² in the scenario polygons filled, geometries simplified). All figures are computed from the unsimplified project data. Details and limits: <a href="analysis/">Evidence &amp; method</a>.</p>
+    </div>
+  </aside>
+</div>
+<script>
+(function(){
+// Netherlands flood explorer. Page flow: load data -> build METRICS/filters ->
+// map.on('load') adds layers and pins -> every interaction ends in recolour() (map classes) and/or update() (side panel).
+// Heavy layers (scenario depth, buildings, grid, land use, soil, water, roads) are fetched on first use.
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const DARK=css('--ground').toLowerCase()==='#141817';
+const $=id=>document.getElementById(id);
+let SAVED=null;try{SAVED=JSON.parse(sessionStorage.getItem('nlmapstate'));sessionStorage.removeItem('nlmapstate');}catch(e){}
+let metric,activeGem=null,activeBuurt=null,map,R=800,areas=[],baseLayers=[],hoverId=null,lastDrag=0;
+const cache={};
+const getJSON=u=>cache[u]||(cache[u]=fetch(u).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json();}));
+{const b=$('theme');b.textContent=DARK?'☀ Light mode':'☾ Dark mode';
+ b.onclick=()=>{try{localStorage.setItem('theme',DARK?'light':'dark');
+   sessionStorage.setItem('nlmapstate',JSON.stringify({m:metric&&metric.k,g:activeGem,s:activeBuurt,R,a:areas.map(({id,lon,lat})=>({id,lon,lat})),v:map?{c:map.getCenter(),z:map.getZoom()}:null,
+     on:[...document.querySelectorAll('.ctrl input[type=checkbox]')].filter(c=>c.checked).map(c=>c.id),T:$('tsel').value,bm:$('bmode').value}));}catch(e){}
+   location.reload();};}
+{const small=()=>matchMedia('(max-width:700px)').matches,lg=$('legend'),ct=$('ctrl'),ly=$('layers');
+ const setLayers=open=>{ct.classList.toggle('collapsed',!open);ly.textContent=open?'Layers ▴':'Layers ▾';ly.setAttribute('aria-expanded',open);};
+ if(small()){lg.classList.add('collapsed');setLayers(false);}
+ lg.addEventListener('click',()=>{if(small())lg.classList.toggle('collapsed');});
+ ly.addEventListener('click',()=>setLayers(ct.classList.contains('collapsed')));}
+
+Promise.all([getJSON('data/buurten.json'),getJSON('data/cells.json'),getJSON('data/observed.json'),getJSON('data/facts.json'),getJSON('data/relief.json')]).then(init).catch(e=>{
+  $('lede').textContent='The data files could not be loaded ('+e.message+'). Serve this folder over HTTP, for example with: python -m http.server';console.error(e);});
+
+function init([BU,CE,OBS,F,REL]){
+const fv=k=>F[k].v;
+const B=BU.features.map(f=>f.properties);                     // buurt records, index = feature id
+BU.features.forEach((f,i)=>{f.id=i;f.properties.i=i;});
+const NBU=B.length, cols=CE.cols, X={};cols.forEach((c,i)=>X[c]=i);
+const C=CE.rows;
+const centroid=f=>d3.geoCentroid(f);
+// ---- lede and chain
+$('lede').textContent=`Limburg, July 2021. ${fv('n_buurten')} buurten touching the observed flood extent, ${fv('pop_buurten').toLocaleString()} residents, ${fv('res_in_extent').toLocaleString()} residential buildings inside the observed extent. Compare any two places instead of one average, and see the observed flood next to the modelled scenarios, which are kept apart.`;
+d3.select('#chain').selectAll('li').data(['Raw data','Study area','BAG (2021 snapshot)','Modelled hazard','Environment','Building exposure','Grid exposure','Buurt dataset','Models','Map and summary','Inventory and age']).join('li').text(d=>d);
+// ---- symbology
+const P=v=>v.toFixed(1)+'%', P1=v=>(v*100).toFixed(1)+'%';
+const METRICS=[
+  {g:'Exposure to the observed 2021 flood',k:'shC',l:'Share of buurt residents in the flood extent',f:b=>b.shC,fmt:v=>(v*100).toFixed(v<.1?1:0)+'%',r:'Blues',zero:true,none:'No residents in the extent',unit:'BAG-allocated (C)'},
+  {g:'Exposure to the observed 2021 flood',k:'popC',l:'Residents in the flood extent',f:b=>b.popC,fmt:v=>Math.round(v).toLocaleString(),r:['#dbe9f6','#9ec5ea','#5c9fdc','#2a78d6','#14457f'],zero:true,none:'No residents in the extent',unit:'BAG-allocated (C), people'},
+  {g:'Exposure to the observed 2021 flood',k:'dwf',l:'Dwellings in the flood extent',f:b=>b.dwf,fmt:v=>Math.round(v).toLocaleString(),r:'GnBu',zero:true,none:'No dwellings in the extent',unit:'BAG, approx. 2021 snapshot'},
+  {g:'People',k:'dens',l:'Residents per km²',f:b=>b.dens,fmt:v=>Math.round(v).toLocaleString(),r:'YlGnBu'},
+  {g:'People',k:'p65',l:'Aged 65 and over',f:b=>b.p65,fmt:P,r:'PuBuGn'},
+  {g:'People',k:'p014',l:'Aged 0–14',f:b=>b.p014,fmt:P,r:'GnBu'},
+  {g:'People',k:'psing',l:'Single-person households',f:b=>b.psing,fmt:P,r:'Greys'},
+  {g:'Need and access',k:'plow',l:'Persons with a low income',f:b=>b.plow,fmt:P,r:'YlOrBr'},
+  {g:'Need and access',k:'ben',l:'Benefit recipients per 100 residents',f:b=>b.ben,fmt:v=>v.toFixed(1),r:'Reds'},
+  {g:'Need and access',k:'cars',l:'Cars per household',f:b=>b.cars,fmt:v=>v.toFixed(2),r:'RdPu'},
+  {g:'Need and access',k:'gp',l:'Average distance to a GP practice',f:b=>b.gp,fmt:v=>v.toFixed(1)+' km',r:'PuRd'},
+  {g:'Housing',k:'pown',l:'Owner-occupied homes',f:b=>b.pown,fmt:P,r:'Greens'},
+  {g:'Housing',k:'pmulti',l:'Multi-family dwellings',f:b=>b.pmulti,fmt:P,r:'BuPu'},
+  {g:'Environment',k:'elev',l:'Mean elevation (AHN4)',f:b=>b.elev,fmt:v=>v.toFixed(0)+' m',r:['#e8ddd0','#cdb79d','#a88c6c','#7c6247','#4f3b28'],unit:'metres above NAP, mean of 100 m cell centres'},
+  {g:'Environment',k:'road',l:'Road network density (NWB)',f:b=>b.road,fmt:v=>v.toFixed(1)+' km/km²',r:['#e3e7ea','#bcc6cc','#8f9ea8','#617380','#3a4a55'],unit:'length of road centre-lines, not road area'},
+  {g:'Environment',k:'wat',l:'Water share (Top10NL)',f:b=>b.wat,fmt:v=>(v*100).toFixed(1)+'%',r:'BuGn',zero:true,none:'No surface water'}
+].filter(m=>B.some(b=>isFinite(m.f(b))&&m.f(b)!=null));
+metric=(SAVED&&METRICS.find(m=>m.k===SAVED.m))||METRICS[0];
+const msel=d3.select('#metric');
+d3.groups(METRICS,m=>m.g).forEach(([g,ms])=>{const og=msel.append('optgroup').attr('label',g);ms.forEach(m=>og.append('option').attr('value',m.k).text(m.l));});
+msel.property('value',metric.k).on('change',function(){metric=METRICS.find(m=>m.k===this.value);recolour();});
+// ---- municipality / buurt filter
+const visible=i=>(!activeGem||B[i].gem===activeGem)&&(!activeBuurt||B[i].code===activeBuurt);
+const areaLabel=()=>activeBuurt?B.find(b=>b.code===activeBuurt).name:activeGem||'the whole study area';
+const gsel=d3.select('#gemsel'),ssel=d3.select('#subsel');
+gsel.append('option').attr('value','').text('All municipalities');
+[...new Set(B.map(b=>b.gem))].sort(d3.ascending).forEach(g=>gsel.append('option').attr('value',g).text(g));
+function fillBuurten(){
+  const bs=B.filter(b=>!activeGem||b.gem===activeGem).sort((p,q)=>d3.ascending(p.name,q.name));
+  ssel.selectAll('option').remove();ssel.append('option').attr('value','').text(activeGem?'All buurten in '+activeGem:'All buurten');
+  bs.forEach(b=>ssel.append('option').attr('value',b.code).text(b.name+(activeGem?'':' ('+b.gem+')')));
+  ssel.property('value',activeBuurt||'');
+}
+fillBuurten();
+document.querySelectorAll('.alllab').forEach(e=>e.textContent='Study area');
+// ---- cell arrays
+const NC=C.length, clon=new Float64Array(NC), clat=new Float64Array(NC), cb=new Int16Array(NC);
+C.forEach((r,i)=>{clon[i]=r[X.lon];clat[i]=r[X.lat];cb[i]=r[X.b];});
+const cellsPerBuurt=new Float64Array(NBU);for(let i=0;i<NC;i++)if(cb[i]>=0)cellsPerBuurt[cb[i]]++;
+// ---- map
+const bounds=[[fv('bounds')[0],fv('bounds')[1]],[fv('bounds')[2],fv('bounds')[3]]];
+const BLANK={version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':css('--ground')}}]};
+const STYLE=DARK?'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json':'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+async function loadStyle(){
+  try{const c=new AbortController();const t=setTimeout(()=>c.abort(),6000);const r=await fetch(STYLE,{signal:c.signal});clearTimeout(t);if(!r.ok)throw 0;return await r.json();}catch(e){return BLANK;}
+}
+const tip=$('tip'),empty={type:'FeatureCollection',features:[]};
+const OBSCOL='#2a78d6', MODCOL=DARK?'#3fb6c4':'#0f7b8a';
+const DEPCOLS=['#d9f0e3','#a5dcc0','#6bc3a0','#35a08a','#1c7a78','#0f4f5f'];
+const DEPLAB=['under 0.5 m','0.5 – 1.0 m','1.0 – 1.5 m','1.5 – 2.0 m','2.0 – 5.0 m','over 5 m'];
+const BBGCOL={'Residential':'#f0b8a0','Industry, retail, services':'#c9a6b5','Agriculture':'#e8e3a0','Parks, sport, recreation':'#9fd6a1','Woods and nature':'#4f9d69','Water':'#8ec3ee','Roads and rail':'#a0a0a0','Other':'#d4d4d4'};
+const SOILS=['Brikgronden','Dikke eerdgronden','Gedefinieerde associaties','Kalkhoudende zandgronden','Kalkloze zandgronden','Kalksteen verweringsgronden','Leemgronden','Moerige gronden','Oude rivierkleigronden','Podzolgronden','Rivierkleigronden','Veengronden','Zeer oude fluviatiele afzettingen','Zeer oude mariene afzettingen'];
+const SOILCOL=SOILS.map((s,i)=>d3.schemeSet3[i%12]);
+const ROADCOL={R:DARK?'#e8e8e8':'#333333',P:DARK?'#c0c0c0':'#6a6a6a',G:DARK?'#8f8f8f':'#999999',T:'#c0507a'};
+const ROADLAB={R:'Code R',P:'Code P',G:'Code G',T:'Code T'};
+const BLDCLS=[['#d62728','Residential, flooded in 2021'],['#8c564b','Non-residential, flooded in 2021'],['#9a9a9a','Residential, not flooded'],[DARK?'#555':'#d0d0d0','Other building']];
+function hatch(){const s=16,c=document.createElement('canvas');c.width=c.height=s;const g=c.getContext('2d');g.strokeStyle=MODCOL;g.lineWidth=2.2;g.globalAlpha=.85;
+  g.beginPath();g.moveTo(-2,s-2);g.lineTo(s-2,-2);g.moveTo(2,s+2);g.lineTo(s+2,2);g.moveTo(-2,2*s-2);g.lineTo(2*s-2,-2);g.stroke();return g.getImageData(0,0,s,s);}
+loadStyle().then(style=>{
+  map=new maplibregl.Map({container:'map',style,bounds,fitBoundsOptions:{padding:30},attributionControl:{compact:true,customAttribution:'CBS, Kadaster, 4TU, LDO, PDOK'},dragRotate:false,pitchWithRotate:false});
+  map.touchZoomRotate.disableRotation();
+  map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
+  map.on('load',()=>{
+    baseLayers=map.getStyle().layers.filter(l=>l.type!=='background').map(l=>l.id);
+    const SL=map.getStyle().layers,lastGeom=SL.map(l=>l.type!=='symbol').lastIndexOf(true);
+    const sym=SL.slice(lastGeom+1).find(l=>l.type==='symbol');
+    const before=sym?sym.id:undefined,add=l=>map.addLayer(l,before);
+    map.addImage('hatch',hatch(),{pixelRatio:2});
+    map.addSource('bu',{type:'geojson',data:BU});
+    map.addSource('obs',{type:'geojson',data:OBS});
+    ['ror','dep','bld','grid','bbg','soil','water','roads'].forEach(k=>map.addSource(k,{type:'geojson',data:empty}));
+    map.addSource('rings',{type:'geojson',data:empty});
+    const fs=(k,d)=>['coalesce',['feature-state',k],d];
+    add({id:'bu-fill',type:'fill',source:'bu',paint:{'fill-color':['case',['==',fs('c','none'),'none'],'rgba(0,0,0,0)',fs('c','#000000')],'fill-opacity':['case',['==',fs('c','none'),'none'],0,DARK?.8:.74]}});
+    add({id:'bu-line',type:'line',source:'bu',paint:{'line-color':DARK?'#000000':'#ffffff','line-width':['interpolate',['linear'],['zoom'],8,.1,13,.9],'line-opacity':.8}});
+    add({id:'bbg-fill',type:'fill',source:'bbg',layout:{visibility:'none'},paint:{'fill-color':['match',['get','g'],...Object.entries(BBGCOL).flat(),'#ccc'],'fill-opacity':.55}});
+    add({id:'soil-fill',type:'fill',source:'soil',layout:{visibility:'none'},paint:{'fill-color':['match',['get','c'],...SOILS.flatMap((s,i)=>[s,SOILCOL[i]]),'#ccc'],'fill-opacity':.55}});
+    add({id:'water-fill',type:'fill',source:'water',layout:{visibility:'none'},paint:{'fill-color':'#5aa9e6','fill-opacity':.75}});
+    add({id:'grid-fill',type:'fill',source:'grid',layout:{visibility:'none'},paint:{'fill-color':['interpolate',['linear'],['coalesce',['get','popC'],0],0,'rgba(0,0,0,0)',0.01,'#dbe9f6',3,'#5c9fdc',10,'#14457f'],'fill-opacity':.85}});
+    add({id:'dep-fill',type:'fill',source:'dep',layout:{visibility:'none'},paint:{'fill-color':['match',['get','k'],...DEPCOLS.flatMap((c,i)=>[i,c]),'#ccc'],'fill-opacity':.7}});
+    add({id:'ror-fill',type:'fill',source:'ror',layout:{visibility:'none'},paint:{'fill-pattern':'hatch','fill-opacity':.9}});
+    add({id:'ror-line',type:'line',source:'ror',layout:{visibility:'none'},paint:{'line-color':MODCOL,'line-width':1.3,'line-dasharray':[3,2]}});
+    add({id:'obs-fill',type:'fill',source:'obs',paint:{'fill-color':OBSCOL,'fill-opacity':.45}});
+    add({id:'obs-line',type:'line',source:'obs',paint:{'line-color':'#1c5cab','line-width':.8}});
+    add({id:'roads-line',type:'line',source:'roads',layout:{visibility:'none'},paint:{'line-color':['match',['get','t'],...Object.entries(ROADCOL).flat(),'#999'],'line-width':['interpolate',['linear'],['zoom'],9,.3,14,1.4],'line-opacity':.8}});
+    add({id:'bld-fill',type:'fill',source:'bld',minzoom:11.5,layout:{visibility:'none'},paint:{'fill-color':bldColour(),'fill-outline-color':'rgba(0,0,0,0.25)'}});
+    add({id:'tint-a',type:'fill',source:'bu',paint:{'fill-color':css('--a'),'fill-opacity':fs('ta',0)}});
+    add({id:'tint-b',type:'fill',source:'bu',paint:{'fill-color':css('--b'),'fill-opacity':fs('tb',0)}});
+    add({id:'sel-line',type:'line',source:'bu',filter:['==',['get','code'],''],paint:{'line-color':css('--ink'),'line-width':2.4}});
+    add({id:'bu-halo',type:'line',source:'bu',minzoom:9,layout:{'line-join':'round'},paint:{'line-color':css('--panel'),'line-opacity':.75,'line-width':['interpolate',['linear'],['zoom'],9,1.2,12,2.6,15,4]}});
+    add({id:'bu-edge',type:'line',source:'bu',minzoom:9,layout:{'line-join':'round'},paint:{'line-color':css('--ink'),'line-opacity':['interpolate',['linear'],['zoom'],9,.4,12,.75],'line-width':['interpolate',['linear'],['zoom'],9,.5,12,1.1,15,2]}});
+    add({id:'bu-hover',type:'line',source:'bu',paint:{'line-color':css('--ink'),'line-width':['case',['boolean',['feature-state','hover'],false],2.4,0]}});
+    map.addLayer({id:'rings',type:'line',source:'rings',paint:{'line-color':['get','col'],'line-width':2.4}});
+    const tf=sym&&sym.layout&&sym.layout['text-font'];
+    if(style.glyphs&&tf)map.addLayer({id:'bu-label',type:'symbol',source:'bu',minzoom:12,layout:{'text-field':['get','name'],'text-font':tf,'text-size':['interpolate',['linear'],['zoom'],12,10.5,14,12.5],'text-transform':'uppercase','text-letter-spacing':.06,'text-max-width':8},
+      paint:{'text-color':css('--muted'),'text-halo-color':css('--panel'),'text-halo-width':1.6}});
+    if(style===BLANK)$('bm').parentElement.style.display='none';
+    if(matchMedia('(max-width:700px)').matches){const at=document.querySelector('.maplibregl-ctrl-attrib');if(at){at.classList.remove('maplibregl-compact-show');at.removeAttribute('open');}}
+    wire();recolour();
+    if(SAVED&&SAVED.a){areas.push(...SAVED.a);R=SAVED.R||R;$('rad').value=R;$('radv').textContent=R+' m';}
+    else{const nm=n=>{const i=B.findIndex(b=>b.name===n);return i<0?null:centroid(BU.features[i]);};
+      const a=nm('Valkenburg')||[bounds[0][0],bounds[0][1]],b=nm('Meerssen')||[bounds[1][0],bounds[1][1]];
+      areas.push({id:'a',lon:a[0],lat:a[1]},{id:'b',lon:b[0],lat:b[1]});}
+    if(SAVED&&(SAVED.g||SAVED.s)){activeGem=SAVED.g||null;gsel.property('value',activeGem||'');fillBuurten();activeBuurt=SAVED.s||null;ssel.property('value',activeBuurt||'');applyFilter(true);}
+    if(SAVED&&SAVED.v)map.jumpTo({center:SAVED.v.c,zoom:SAVED.v.z});
+    if(SAVED&&SAVED.T)$('tsel').value=SAVED.T;if(SAVED&&SAVED.bm)$('bmode').value=SAVED.bm;
+    areas.forEach(addMarker);
+    $('hint').textContent='Two example areas are placed. Drag the pins, or click to move the nearer one.';
+    drawRings();update();
+    // layers: restore what was on before a theme switch, else the default (observed extent + boundaries)
+    if(SAVED&&SAVED.on)['obs','ror','dep','bld','grid','sb','relief','bbg','soil','water','roads','bm'].forEach(id=>{const c=$(id);if(c&&c.checked!==SAVED.on.includes(id)){c.checked=SAVED.on.includes(id);c.dispatchEvent(new Event('change'));}});
+    window.__test={map,fit:()=>{map.resize();map.fitBounds(bounds,{padding:30,duration:0});},areas:()=>areas.map(({id,lon,lat})=>({id,lon,lat})),agg:(a,r)=>{const R0=R;R=r;try{return agg(a);}finally{R=R0;}},B,C,X};
+    window.__ready=true;
+  });
+});
+function bldColour(){
+  const T=$('tsel').value,m=$('bmode').value;
+  if(m==='cap')return ['case',['all',['==',['get','k'],2],['==',['get','t'+T],1]],'#d62728',['==',['get','k'],2],'#f2c200',['==',['get','k'],3],'#8c564b',['==',['get','k'],1],'#9a9a9a',DARK?'#555':'#d0d0d0'];
+  return ['match',['get','k'],2,'#d62728',3,'#8c564b',1,'#9a9a9a',DARK?'#555':'#d0d0d0'];
+}
+// ---- lazy layers: fetched when first switched on
+const loaded={},busy={};
+function lazy(key,url,btnLabel,after){
+  if(loaded[key])return Promise.resolve();
+  if(busy[key])return busy[key];
+  const l=$(btnLabel);if(l)l.textContent='loading…';
+  return busy[key]=getJSON(url).then(d=>{map.getSource(key).setData(d);loaded[key]=true;if(l)l.textContent='';if(after)after(d);}).catch(e=>{if(l)l.textContent='failed to load';console.error(e);delete busy[key];});
+}
+const vis=(ids,on)=>ids.forEach(id=>map.getLayer(id)&&map.setLayoutProperty(id,'visibility',on?'visible':'none'));
+function wire(){
+  map.on('mousemove',e=>{
+    const r=map.getContainer().getBoundingClientRect();
+    let html=null;
+    const fb=map.getLayer('bld-fill')&&map.getLayoutProperty('bld-fill','visibility')==='visible'?map.queryRenderedFeatures(e.point,{layers:['bld-fill']})[0]:null;
+    const T=$('tsel').value;
+    if(fb){const p=fb.properties,k=p.k;
+      html=`<strong>${['Other building','Residential building, not flooded','Residential building, flooded in July 2021','Non-residential building, flooded in July 2021'][k]}</strong>${k===2||k===1?`<br>${p.nd} dwelling${p.nd==1?'':'s'}`:''}${p.by?`<br>Built ${p.by}`:''}${k===2?`<br><small>Inside the observed extent (footprint test). ${p['t'+T]==1?'Also':'Not'} within the modelled scenario T = ${(+T).toLocaleString()} yr (footprint + 2 m).</small>`:''}`;}
+    const f=map.queryRenderedFeatures(e.point,{layers:['bu-fill']})[0];
+    if(f){const i=f.id,b=B[i];
+      if(hoverId!==null&&hoverId!==i)map.setFeatureState({source:'bu',id:hoverId},{hover:false});
+      hoverId=i;map.setFeatureState({source:'bu',id:i},{hover:true});
+      if(!html){const v=metric.f(b);
+        html=`<strong>${b.name}</strong> · ${b.gem}<br>${b.pop.toLocaleString()} residents (CBS)<br>${metric.l}: ${isFinite(v)&&v!=null?metric.fmt(v):'n/a'}${b.popC>0?`<br>${Math.round(b.popC).toLocaleString()} residents in the observed extent (${(b.shC*100).toFixed(0)}%)`:''}${[['A',tintA],['B',tintB]].map(([n,w])=>share(w,i)?`<br>Counted in ${n}: ${share(w,i)} of its 100 m cells`:'').join('')}`;}
+    }else if(hoverId!==null){map.setFeatureState({source:'bu',id:hoverId},{hover:false});hoverId=null;}
+    if(html){tip.style.display='block';tip.style.left=Math.max(4,Math.min(e.point.x+14,r.width-280))+'px';tip.style.top=(e.point.y+14)+'px';tip.innerHTML=html;}else tip.style.display='none';
+  });
+  map.getCanvas().addEventListener('mouseleave',()=>{tip.style.display='none';if(hoverId!==null)map.setFeatureState({source:'bu',id:hoverId},{hover:false});hoverId=null;});
+  map.on('click',e=>{
+    if(Date.now()-lastDrag<300)return;
+    const ll=e.lngLat;let a;
+    if(areas.length<2){a={id:areas.some(x=>x.id==='a')?'b':'a',lon:ll.lng,lat:ll.lat};areas.push(a);addMarker(a);}
+    else{a=areas.map(x=>({x,d:Math.hypot(x.lon-ll.lng,x.lat-ll.lat)})).sort((p,q)=>p.d-q.d)[0].x;a.lon=ll.lng;a.lat=ll.lat;a.marker.setLngLat([a.lon,a.lat]);}
+    const h=$('hint');h.style.display=areas.length===2?'none':null;if(areas.length===1)h.textContent='Now click to place area B.';
+    drawRings();update();
+  });
+  const T=()=>$('tsel').value;
+  let curRor=null,curDep=null;
+  const loadRor=()=>{const t=T();if(curRor===t)return;curRor=t;getJSON('data/ror_t'+t+'.json').then(d=>{if(curRor===t)map.getSource('ror').setData(d);}).catch(console.error);};
+  const loadDep=()=>{const t=T();if(curDep===t)return;curDep=t;$('depl').textContent='loading…';getJSON('data/ror_depth_t'+t+'.json').then(d=>{if(curDep===t){map.getSource('dep').setData(d);$('depl').textContent='';}}).catch(e=>{$('depl').textContent='failed to load';console.error(e);});};
+  $('obs').addEventListener('change',e=>{vis(['obs-fill','obs-line'],e.target.checked);drawLegend();});
+  $('ror').addEventListener('change',e=>{vis(['ror-fill','ror-line'],e.target.checked);if(e.target.checked)loadRor();drawLegend();});
+  $('dep').addEventListener('change',e=>{vis(['dep-fill'],e.target.checked);if(e.target.checked)loadDep();drawLegend();});
+  $('tsel').addEventListener('change',()=>{if($('ror').checked)loadRor();else curRor=null;if($('dep').checked)loadDep();else curDep=null;map.setPaintProperty('bld-fill','fill-color',bldColour());drawLegend();update();});
+  $('bld').addEventListener('change',e=>{vis(['bld-fill'],e.target.checked);$('bldmode').style.display=e.target.checked?'flex':'none';if(e.target.checked){lazy('bld','data/bag_near.json','bldl');if(map.getZoom()<11.5)map.easeTo({zoom:12,center:[areas[0].lon,areas[0].lat]});}drawLegend();});
+  $('bmode').addEventListener('change',()=>{map.setPaintProperty('bld-fill','fill-color',bldColour());drawLegend();});
+  $('grid').addEventListener('change',e=>{vis(['grid-fill'],e.target.checked);if(e.target.checked)lazy('grid','data/grid.json','gridl');drawLegend();});
+  $('sb').addEventListener('change',e=>vis(['bu-halo','bu-edge','bu-label'],e.target.checked));
+  $('bm').addEventListener('change',e=>vis(baseLayers,e.target.checked));
+  $('relief').addEventListener('change',e=>{
+    if(e.target.checked&&!map.getSource('relief')){const b=REL.bounds;
+      map.addSource('relief',{type:'image',url:'assets/relief.png',coordinates:[[b[0],b[3]],[b[2],b[3]],[b[2],b[1]],[b[0],b[1]]]});
+      map.addLayer({id:'relief',type:'raster',source:'relief',paint:{'raster-opacity':DARK?.45:.5,'raster-fade-duration':0}},'bbg-fill');}
+    vis(['relief'],e.target.checked);});
+  $('bbg').addEventListener('change',e=>{vis(['bbg-fill'],e.target.checked);if(e.target.checked)lazy('bbg','data/bbg.json','bbgl');drawLegend();});
+  $('soil').addEventListener('change',e=>{vis(['soil-fill'],e.target.checked);if(e.target.checked)lazy('soil','data/soil.json','soill');drawLegend();});
+  $('water').addEventListener('change',e=>{vis(['water-fill'],e.target.checked);if(e.target.checked)lazy('water','data/water.json','waterl');drawLegend();});
+  $('roads').addEventListener('change',e=>{vis(['roads-line'],e.target.checked);if(e.target.checked)lazy('roads','data/roads.json','roadsl');drawLegend();});
+  $('rad').addEventListener('input',e=>{R=+e.target.value;$('radv').textContent=R+' m';drawRings();schedule();});
+  $('reset').addEventListener('click',()=>{areas.forEach(a=>a.marker.remove());areas.length=0;const h=$('hint');h.style.display=null;h.textContent='Click the map to place area A, then area B. Drag either pin to move it.';drawRings();update();});
+  gsel.on('change',function(){activeGem=this.value||null;activeBuurt=null;fillBuurten();applyFilter();});
+  ssel.on('change',function(){activeBuurt=this.value||null;applyFilter();});
+}
+function applyFilter(quiet){
+  const conds=[];if(activeGem)conds.push(['==',['get','gem'],activeGem]);if(activeBuurt)conds.push(['==',['get','code'],activeBuurt]);
+  const f=conds.length?['all',...conds]:null;
+  ['bu-fill','bu-line','tint-a','tint-b','bu-hover','bu-halo','bu-edge'].forEach(id=>map.getLayer(id)&&map.setFilter(id,f));
+  if(map.getLayer('bu-label'))map.setFilter('bu-label',f);
+  map.setFilter('sel-line',['==',['get','code'],activeBuurt||'']);
+  if(!quiet){let b=bounds;
+    if(activeGem||activeBuurt){const feats=BU.features.filter((x,i)=>visible(i));if(feats.length)b=d3.geoBounds({type:'FeatureCollection',features:feats});}
+    map.fitBounds(b,{padding:activeBuurt?70:40,maxZoom:15});
+    if(activeGem||activeBuurt)movePinsInside();}
+  ALL=allAgg();document.querySelectorAll('.alllab').forEach(e=>e.textContent=activeBuurt||activeGem?areaLabel():'Study area');
+  recolour();update();
+}
+function movePinsInside(){
+  const idx=B.map((b,i)=>i).filter(visible);if(!idx.length)return;
+  const inside=a=>idx.some(i=>d3.geoContains(BU.features[i].geometry,[a.lon,a.lat]));
+  const byPop=idx.slice().sort((p,q)=>B[q].pop-B[p].pop).map(i=>centroid(BU.features[i]));
+  const metres=(p,q)=>d3.geoDistance(p,q)*6371000;let moved=false;
+  areas.forEach(a=>{if(!a.marker||inside(a))return;
+    const other=areas.find(x=>x!==a&&x.marker&&inside(x));const d=p=>other?metres(p,[other.lon,other.lat]):Infinity;
+    const c=byPop.find(p=>d(p)>3*R)||byPop.reduce((m,p)=>d(p)>d(m)?p:m);a.lon=c[0];a.lat=c[1];a.marker.setLngLat(c);moved=true;});
+  if(moved)drawRings();
+}
+function addMarker(a){
+  const el=document.createElement('div');el.className='pin '+a.id;el.textContent=a.id.toUpperCase();el.setAttribute('role','button');el.setAttribute('aria-label','Area '+a.id.toUpperCase()+', drag to move');
+  el.addEventListener('click',e=>e.stopPropagation());
+  a.marker=new maplibregl.Marker({element:el,draggable:true}).setLngLat([a.lon,a.lat]).addTo(map);
+  a.marker.on('drag',()=>{const p=a.marker.getLngLat();a.lon=p.lng;a.lat=p.lat;drawRings();schedule();});
+  a.marker.on('dragend',()=>{lastDrag=Date.now();});
+}
+function drawRings(){
+  if(!map||!map.getSource('rings'))return;
+  map.getSource('rings').setData({type:'FeatureCollection',features:areas.map(a=>({type:'Feature',properties:{col:css('--'+a.id)},geometry:d3.geoCircle().center([a.lon,a.lat]).radius(R/111195).precision(1)()}))});
+}
+// ---- colour classes (quintiles over the visible buurten)
+let breaks=[],cols_=[];
+function recolour(){
+  if(!map)return;
+  const ok=(b,i)=>visible(i)&&isFinite(metric.f(b))&&metric.f(b)!=null&&!(metric.zero&&metric.f(b)<=0);
+  const vals=B.filter(ok).map(b=>metric.f(b)).sort(d3.ascending);
+  breaks=[.2,.4,.6,.8].map(p=>d3.quantile(vals,p));
+  cols_=Array.isArray(metric.r)?metric.r:d3['scheme'+metric.r][6].slice(1);
+  const cls=v=>{let k=0;while(k<breaks.length&&v>=breaks[k])k++;return cols_[k];};
+  B.forEach((b,i)=>map.setFeatureState({source:'bu',id:i},{c:ok(b,i)?cls(metric.f(b)):'none'}));
+  drawLegend();
+}
+function drawLegend(){
+  const L=d3.select('#legend').html('');
+  L.append('h3').text(metric.l);
+  L.append('p').attr('class','sub').text([metric.unit,'Quintile classes',(activeGem||activeBuurt)?'within '+areaLabel():null,'one polygon per buurt'].filter(Boolean).join(' · '));
+  const f=metric.fmt,b=breaks,rows=[];
+  if(b.length&&b.every(isFinite))for(let k=0;k<cols_.length;k++)rows.push([cols_[k],k===0?(metric.zero?'over 0 – ':'under ')+f(b[0]):k===cols_.length-1?f(b[k-1])+' and over':f(b[k-1])+' – '+f(b[k])]);
+  rows.forEach(([c,t])=>{const r=L.append('div').attr('class','row');r.append('span').attr('class','sw').style('background',c);r.append('span').text(t);});
+  L.append('div').attr('class','row').call(r=>{r.append('span').attr('class','sw hol');r.append('span').text(metric.none||'No data');});
+  const sec=(cls,title)=>{L.append('div').attr('class','sep');L.append('h4').attr('class',cls).text(title);};
+  const row=(css_,t,fn)=>L.append('div').attr('class','row').call(r=>{const s=r.append('span').attr('class','sw'+(fn?' '+fn:''));if(css_)s.style('background',css_);r.append('span').text(t);});
+  if($('obs').checked){sec('obs','Observed, July 2021');row(null,'Maximum flooded extent (4TU, preliminary)','obs');}
+  const T=(+$('tsel').value).toLocaleString();
+  if($('ror').checked||$('dep').checked){sec('mod','Modelled scenario, not observed');if($('ror').checked)row(null,'Flooded area, breach scenario T = '+T+' yr','mod');
+    if($('dep').checked){DEPCOLS.forEach((c,i)=>row(c,'Max depth '+DEPLAB[i]));}}
+  if($('bld').checked){sec('','Buildings (BAG)');
+    if($('bmode').value==='cap'){row('#d62728','Flooded in 2021 and inside scenario T = '+T);row('#f2c200','Flooded in 2021, outside the scenario');row('#9a9a9a','Residential, not flooded');row(BLDCLS[3][0],'Other building / non-residential');}
+    else BLDCLS.forEach(([c,t])=>row(c,t));
+    L.append('p').attr('class','sub').text('Shown from zoom 12, within 150 m of the observed extent');}
+  if($('grid').checked){sec('','100 m grid');row('#dbe9f6','Exposed residents per cell, from near 0');row('#5c9fdc','about 3');row('#14457f','10 or more');}
+  if($('bbg').checked){sec('','Land use, BBG 2017');Object.entries(BBGCOL).forEach(([k,c])=>row(c,k));}
+  if($('soil').checked){sec('','Soil, BRO main class');SOILS.forEach((s,i)=>row(SOILCOL[i],s));}
+  if($('water').checked){sec('','Water');row('#5aa9e6','Water bodies (Top10NL)');}
+  if($('roads').checked){sec('','Roads, NWB by road-authority code');Object.entries(ROADLAB).forEach(([k,t])=>L.append('div').attr('class','row').call(r=>{r.append('span').attr('class','sw').style('height','3px').style('background',ROADCOL[k]);r.append('span').text(t);}));}
+}
+// ---- aggregation: what a circle counts = the 100 m cells whose centre is inside it (equirectangular distance at the circle's latitude)
+function agg(a){
+  const COS=Math.cos(a.lat*Math.PI/180),r2=R*R;
+  const o={pop:0,popA:0,popC:0,dw:0,dwf:0,a65:0,a65p:0,a014:0,a014p:0,n:0,w:new Float64Array(NBU),wp:new Float64Array(NBU)};
+  for(let i=0;i<NC;i++){
+    if((activeGem||activeBuurt)&&!(cb[i]>=0&&visible(cb[i])))continue;
+    const dx=(clon[i]-a.lon)*111195*COS,dy=(clat[i]-a.lat)*111195;
+    if(dx*dx+dy*dy<=r2)add(o,C[i],i);
+  }
+  return fin(o);
+}
+function add(o,r,i){
+  const p=r[X.pop]||0;o.n++;o.pop+=p;o.popA+=r[X.popA]||0;o.popC+=r[X.popC]||0;o.dw+=r[X.dw];o.dwf+=r[X.dwf];
+  if(r[X.a65]!=null){o.a65+=r[X.a65];o.a65p+=p;} if(r[X.a014]!=null){o.a014+=r[X.a014];o.a014p+=p;}
+  if(cb[i]>=0){o.w[cb[i]]+=1;o.wp[cb[i]]+=p;}
+}
+function fin(o){ // buurt-level proxies weighted by the residents counted in each buurt
+  const wsum=d3.sum(o.wp);const wm=f=>{let n=0,d=0;for(let j=0;j<NBU;j++){const w=o.wp[j],v=f(B[j]);if(w>0&&v!=null&&isFinite(v)){n+=w*v;d+=w;}}return d?n/d:NaN;};
+  o.sing=wm(b=>b.psing);o.own=wm(b=>b.pown);o.elev=wm(b=>b.elev);o.g=[wm(b=>b.p014),wm(b=>b.p1525),wm(b=>b.p2545),wm(b=>b.p4565),wm(b=>b.p65)];
+  o.cov=wsum;return o;
+}
+function allAgg(){const o={pop:0,popA:0,popC:0,dw:0,dwf:0,a65:0,a65p:0,a014:0,a014p:0,n:0,w:new Float64Array(NBU),wp:new Float64Array(NBU)};
+  for(let i=0;i<NC;i++){if((activeGem||activeBuurt)&&!(cb[i]>=0&&visible(cb[i])))continue;add(o,C[i],i);}return fin(o);}
+let ALL=allAgg();
+let tintA=null,tintB=null;
+function paintTint(w,prev,key){
+  const frac=i=>cellsPerBuurt[i]?w[i]/cellsPerBuurt[i]:0;
+  if(prev)for(let i=0;i<prev.length;i++)if(prev[i]>0&&!(w&&w[i]>0))map.setFeatureState({source:'bu',id:i},{[key]:0});
+  if(w)for(let i=0;i<w.length;i++)if(w[i]>0)map.setFeatureState({source:'bu',id:i},{[key]:0.08+0.55*Math.min(1,frac(i))});
+}
+function share(w,i){return w&&w[i]>0&&cellsPerBuurt[i]?Math.round(Math.min(1,w[i]/cellsPerBuurt[i])*100)+'%':null;}
+let raf=0;function schedule(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;update();});}
+// ---- panel
+const pct=(n,d)=>d>0?n/d:NaN;
+const ROWS=[
+  ['Residents in 100 m cells',o=>o.pop,'n','CBS grid 2021; suppressed cells count as 0'],
+  ['Residents in the observed extent (C)',o=>o.popC,'n','BAG-allocated: flooded dwellings × people per dwelling'],
+  ['Residents in the observed extent (A)',o=>o.popA,'n','Area-weighted: share of each cell inside the extent'],
+  ['Share of residents in the extent (C)',o=>pct(o.popC,o.pop),'p'],
+  ['Dwelling objects (BAG, approx. 2021)',o=>o.dw,'n','Address objects with a dwelling function, joined to 100 m cells'],
+  ['Dwelling objects in the observed extent',o=>o.dwf,'n',`Per-cell count used for (C); the project log counts ${fv('dw_pts_in_extent').toLocaleString()} dwelling points in the extent overall`],
+  ['Aged 65+, known cells only',o=>pct(o.a65,o.a65p),'p','CBS suppresses small counts, so this covers only the people in cells that report it'],
+  ['Aged 0–14, known cells only',o=>pct(o.a014,o.a014p),'p'],
+  ['Single-person households',o=>o.sing,'p1','Buurt value, weighted by residents counted'],
+  ['Owner-occupied homes',o=>o.own,'p1','Buurt value, weighted by residents counted'],
+  ['Mean elevation (AHN4)',o=>o.elev,'m','Buurt value, metres above NAP']
+];
+const fmt=(v,t)=>!isFinite(v)?'–':t==='p'?(v*100).toFixed(1)+'%':t==='p1'?v.toFixed(1)+'%':t==='m'?v.toFixed(1)+' m':Math.round(v).toLocaleString();
+const tb=d3.select('#tbl tbody');
+function near(a){
+  const COS=Math.cos(a.lat*Math.PI/180);let best=-1,bd=1e18;for(let i=0;i<NC;i++){const dx=(clon[i]-a.lon)*COS,dy=clat[i]-a.lat,d=dx*dx+dy*dy;if(d<bd){bd=d;best=i;}}
+  return bd<4e-6&&cb[best]>=0?B[cb[best]].name:'outside the study area';
+}
+function update(){
+  const A=areas.find(a=>a.id==='a'),Bp=areas.find(a=>a.id==='b');
+  const oa=A?agg(A):null,ob=Bp?agg(Bp):null;
+  const out=o=>o&&o.n===0?'no 100 m cells inside this circle':null;
+  const outA=out(oa),outB=out(ob);
+  $('popA').textContent=oa?Math.round(oa.pop).toLocaleString():'–';
+  $('popB').textContent=ob?Math.round(ob.pop).toLocaleString():'–';
+  $('miniA').textContent=$('popA').textContent;$('miniB').textContent=$('popB').textContent;
+  $('subA').textContent=outA||(oa?'residents, '+near(A):'Click the map');
+  $('subB').textContent=outB||(ob?'residents, '+near(Bp):(oa?'Click to place':'then click again'));
+  tb.selectAll('tr').data(ROWS).join('tr').html(r=>{const va=oa?r[1](oa):NaN,vb=ob?r[1](ob):NaN,vall=r[1](ALL);
+    return `<td>${r[0]}${r[3]?`<small>${r[3]}</small>`:''}</td><td class="a">${oa?fmt(va,r[2]):'–'}</td><td class="b">${ob?fmt(vb,r[2]):'–'}</td><td>${fmt(vall,r[2])}</td>`;});
+  if(map){paintTint(oa?oa.w:null,tintA,'ta');paintTint(ob?ob.w:null,tintB,'tb');}
+  tintA=oa?oa.w:null;tintB=ob?ob.w:null;
+  drawBars(outA?null:oa,outB?null:ob);
+}
+// ---- age profile: five CBS age groups, A solid, B outline, study area grey behind
+const GROUPS=['0–14','15–24','25–44','45–64','65+'];
+const py=d3.select('#pyr'),PW=400,PH=200,lab=44,top=6,bh=(PH-top-24)/5;
+function drawBars(oa,ob){
+  py.selectAll('*').remove();
+  const sets=[ALL.g];if(oa)sets.push(oa.g);if(ob)sets.push(ob.g);
+  const mx=Math.max(20,d3.max(sets,s=>d3.max(s.filter(isFinite))));
+  const x=d3.scaleLinear().domain([0,mx]).range([0,PW-lab-10]);
+  GROUPS.forEach((g,i)=>{const y=top+i*bh;
+    py.append('text').attr('x',0).attr('y',y+bh/2).attr('dy','.35em').attr('font-size',10.5).attr('fill','var(--muted)').text(g);
+    if(isFinite(ALL.g[i]))py.append('rect').attr('x',lab).attr('y',y+1).attr('width',x(ALL.g[i])).attr('height',bh-2).attr('rx',2).attr('fill','var(--rule)');
+    if(oa&&isFinite(oa.g[i]))py.append('rect').attr('x',lab).attr('y',y+4).attr('width',x(oa.g[i])).attr('height',bh-8).attr('rx',2).attr('fill','var(--a)').attr('fill-opacity',.85);
+    if(ob&&isFinite(ob.g[i]))py.append('rect').attr('x',lab).attr('y',y+2).attr('width',x(ob.g[i])).attr('height',bh-4).attr('rx',2).attr('fill','none').attr('stroke','var(--b)').attr('stroke-width',2.2);
+    const v=(oa&&isFinite(oa.g[i])?oa.g[i]:ob&&isFinite(ob.g[i])?ob.g[i]:ALL.g[i]);
+  });
+  x.ticks(4).filter(t=>t>0).forEach(t=>py.append('text').attr('x',lab+x(t)).attr('y',PH-8).attr('text-anchor','middle').attr('font-size',9).attr('fill','var(--muted)').text(t+'%'));
+}
+}
+})();
+</script>
+</body>
+</html>
