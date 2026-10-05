@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1b3a5c">
-<title>Evidence and method, Limburg 2021</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b3a5c'/%3E%3Cpath d='M4 20q4-5 8 0t8 0 8 0v8H4z' fill='%232a78d6'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#1B1740">
+<title>Data and method: Limburg floods, July 2021</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B1740'/%3E%3Cpath d='M4 20q4-5 8 0t8 0 8 0v8H4z' fill='%232a78d6'/%3E%3C/svg%3E">
 <script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
-:root{--ground:#F4F5F1;--panel:#FCFCFB;--ink:#16201F;--muted:#5B6664;--rule:#DCE0DA;--grid:#E9ECE7;--focus:#2A78D6;--ns:#D9DCD6;--a:#4A3AA7;--b:#EB6834;--obs:#2a78d6;--mod:#0f7b8a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#141817;--panel:#1B1F1E;--ink:#ECEFEC;--muted:#A3ADAA;--rule:#2F3634;--grid:#252B29;--focus:#86B6EF;--ns:#3A403E;--a:#9085E9;--b:#D95926;--mod:#3fb6c4}}
-:root[data-theme="dark"]{--ground:#141817;--panel:#1B1F1E;--ink:#ECEFEC;--muted:#A3ADAA;--rule:#2F3634;--grid:#252B29;--focus:#86B6EF;--ns:#3A403E;--a:#9085E9;--b:#D95926;--mod:#3fb6c4}
+:root{--ground:#F1F0F7;--panel:#FFFFFF;--ink:#1B1740;--muted:#5F5B80;--rule:#DAD7EA;--grid:#E6E4F1;--focus:#2A78D6;--ns:#D8D5E6;--a:#C2255C;--b:#B86E00;--obs:#2a78d6;--mod:#0f7b8a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#0F0D1F;--panel:#17142B;--ink:#EDEAFB;--muted:#A9A4CC;--rule:#2D2850;--grid:#221E40;--focus:#86B6EF;--ns:#38335C;--a:#F06292;--b:#F2A93B;--mod:#3fb6c4}}
+:root[data-theme="dark"]{--ground:#0F0D1F;--panel:#17142B;--ink:#EDEAFB;--muted:#A9A4CC;--rule:#2D2850;--grid:#221E40;--focus:#86B6EF;--ns:#38335C;--a:#F06292;--b:#F2A93B;--mod:#3fb6c4}
 *{box-sizing:border-box}
-body{margin:0;background:var(--ground);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;font-variant-numeric:tabular-nums}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;font-variant-numeric:tabular-nums}
 main{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
 header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
 h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}
@@ -72,13 +72,19 @@ code{font-size:12px;background:var(--ground);border:1px solid var(--rule);border
 a{color:var(--ink)}
 .src{color:var(--muted);font-size:11.5px;margin-top:6px}
 #loaderr{display:none}
+
+/* ---- restyle ---- */
+body{font-size:14.5px}
+h1,h2{font-family:"Fraunces",Georgia,serif}
+h1{font-weight:600;letter-spacing:-.015em;border-bottom:3px solid #C2255C;display:inline-block;padding-bottom:8px}
+h2{font-weight:600}
 </style>
 </head>
 <body>
 <main>
   <header>
     <div>
-      <h1>Evidence and method</h1>
+      <h1>Data and method</h1>
       <p class="lede" id="lede">Loading…</p>
     </div>
     <nav style="display:flex;gap:8px"><a href="../">← Back to the map</a><button class="theme" id="theme"></button></nav>
@@ -86,13 +92,13 @@ a{color:var(--ink)}
   <div class="note bad" id="loaderr"></div>
 
   <section>
-    <h2>Headline numbers, all from the project run</h2>
+    <h2>Key figures from the project run</h2>
     <p class="sub">Every figure on this page is read from <code>data/facts.json</code>, which was parsed from the project's logs and output tables. The file named under each section shows where a number comes from.</p>
     <div class="stats" id="stats"></div>
   </section>
 
   <section>
-    <h2>Observed flood versus modelled scenarios</h2>
+    <h2>Recorded flood against scenario models</h2>
     <p class="sub">The two are different kinds of evidence and are never mixed. <b>Observed</b>: the maximum flooded extent of July 2021 (4TU.ResearchData), a preliminary reconstruction. <b>Modelled</b>: dike-breach scenarios from the national hazard maps (T = 10, 100, 1,000 and 10,000 years), a design scenario for a different hazard type. The panels show the same 3.6 km window around <span id="winname"></span>. The solid blue area is observed; hatched teal areas are modelled.</p>
     <div class="key"><span><i class="sw" style="background:rgba(42,120,214,.5);border:1px solid #1c5cab"></i>observed extent</span><span><i class="sw" style="background:repeating-linear-gradient(45deg,var(--mod) 0 1.5px,transparent 1.5px 4px);border:1px dashed var(--mod)"></i>modelled scenario</span><span><i class="sw" style="background:#d62728"></i>flooded residential building (BAG)</span><span><i class="sw" style="background:#f2c200"></i>flooded in 2021 but outside the scenario</span><span><i class="sw" style="background:#9a9a9a"></i>other residential building</span></div>
     <div class="grid4" id="small"></div>
@@ -114,13 +120,13 @@ a{color:var(--ink)}
   </section>
 
   <section>
-    <h2>Provenance chain: raw data to the figures on the map</h2>
+    <h2>Data trail: from raw files to map figures</h2>
     <p class="sub">Eleven scripted steps, run in this order (<code>README_RUN_ORDER.md</code>). Steps in teal handle the modelled hazard.</p>
     <ol class="chain" id="chain"></ol>
   </section>
 
   <section>
-    <h2>Three ways to count exposed residents</h2>
+    <h2>Three methods for counting exposed residents</h2>
     <p class="sub">The population is a 100 m grid, the flood is a polygon, and the buildings are in the BAG. The three methods use the same inputs and give different answers, which is itself a finding.</p>
     <div class="scroll"><table id="methtbl"></table></div>
     <div class="src">Source: logs/06.out, outputs/summary_table.csv</div>
@@ -137,14 +143,14 @@ a{color:var(--ink)}
   </section>
 
   <section>
-    <h2>The BAG is today's snapshot: how 2021 was reconstructed</h2>
+    <h2>BAG is a present-day snapshot: rebuilding 2021</h2>
     <p class="sub">The BAG registry is served only as it is today, with no historical archive. Buildings and address objects were therefore filtered to an approximate situation on 14 July 2021 from their status, document date and construction year (script <code>05_building_exposure.py</code>). This is an approximation, and a building demolished before the event but registered with a later document date could be misclassified.</p>
     <div class="scroll"><table id="snaptbl"></table></div>
     <div class="src">Source: logs/run.log (05_building_exposure), logs/06.out</div>
   </section>
 
   <section>
-    <h2>Is a regression on this sample defensible?</h2>
+    <h2>Does a regression on this sample hold up?</h2>
     <p class="sub">A natural next step is a geographically weighted regression (GWR, MGWR) of the share of residents in the flooded area on neighbourhood characteristics. That test was run on the Limburg 2021 buurten. The answer is no, and the numbers show why.</p>
     <div class="scroll"><table id="regtbl"></table></div>
     <div class="src">Source: logs/07.out, logs/08.out</div>
@@ -160,7 +166,7 @@ a{color:var(--ink)}
 
 
   <section>
-    <h2>Limits you should know before using a number</h2>
+    <h2>Caveats to read before quoting a number</h2>
     <ul class="plain" id="limits"></ul>
     <h3>Reproducibility frictions</h3>
     <ul class="plain" id="frict"></ul>
@@ -168,7 +174,7 @@ a{color:var(--ink)}
   </section>
 
   <section>
-    <h2>Data sources</h2>
+    <h2>Source list</h2>
     <p class="sub">All files below were downloaded and opened in the verification run. Sizes are the sizes of the raw files.</p>
     <div class="scroll"><table id="srctbl"></table></div>
     <div class="src">Source: outputs/verified_data_inventory.csv. The 4TU DOI is 10.4121/16817389.v1 (<a href="https://doi.org/10.4121/16817389.v1" rel="noopener">link</a>). Basemap © OpenStreetMap contributors © CARTO.</div>
@@ -178,7 +184,7 @@ a{color:var(--ink)}
 <script>
 (function(){
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const DARK=css('--ground').toLowerCase()==='#141817';
+const DARK=css('--ground').toLowerCase()==='#0f0d1f';
 const $=id=>document.getElementById(id);
 const tb=$('theme');tb.textContent=DARK?'☀ Light mode':'☾ Dark mode';
 tb.onclick=()=>{try{localStorage.setItem('theme',DARK?'light':'dark');}catch(e){}location.reload();};
